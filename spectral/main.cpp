@@ -6,7 +6,7 @@
 #include <QFileDialog>
 #include <QMessageBox>
 #include <QFile>
-
+#include<laplacesolver.h>
 #include <iostream>
 #include <string>
 #include <cstring>
@@ -16,16 +16,26 @@
 #include <QDebug>
 int main(int argc, char *argv[]) {
     QApplication a(argc, argv); //Needed for input widgets (like textbox)
+    qDebug() << "Hello0";
 
     //get filename for the input stl
     QString filename = QFileDialog::getOpenFileName(0, QString("Load triangulation"), QString("../.."), "*.stl");
     if (filename.isEmpty())
         return -1;
 
+    //QString filename="/u/a/agarwala/Desktop/AdaptiveSurfaceReconstruction/project_files/stl_files/sphere-d050-sf1-ml_smoothed.stl";
+
     //load stl file
+    qDebug() << "Hello1";
     Mesh *m = Mesh::loadFromBinaryStl(filename);
+    qDebug() << "Hello2";
+
     const int numberOfMeshFaces = m->getNumberOfFaces();
     qDebug() << "mesh loaded. Number of mesh faces" << m->getNumberOfFaces();
+
+    LaplaceSolver ls=LaplaceSolver(m);
+    ls.decompose();
+    std::cout<<ls.getEigenValue(0)<<'\n';
 
     //Compute the quadmesh
     //Note that each cell has to be disk like (i.e. one connected border, no holes)

@@ -1,7 +1,7 @@
 #include "laplacesolver.h"
+using namespace std;
 
-
-double LaplaceSolver::getWeights(Edge *e, Vertex *optionalOuterTriangleVertex)
+double LaplaceSolver::getWeights(Edge *e, Vertex *optionalOuterTriangleVertex=0)
 {
         double result = 0;
         for (int i = 0; i < 2; i++) {
@@ -41,30 +41,58 @@ double LaplaceSolver::getWeights(Edge *e, Vertex *optionalOuterTriangleVertex)
         return result;
 }
 LaplaceSolver::LaplaceSolver(Mesh* m){
+    m_originalMesh=m;
     N=m->getNumberOfVertices();
-    Laplacian=QVector<QVector<double>*>(N,N);
-    weights=QVector<QVector<double>*>(N,N);
+    functions=QVector<Eigen::VectorXcd>(80,Eigen::VectorXcd(N));
+    Laplacian=MatrixXd(N,N);
+    weights=QVector<QVector<double> >(N,QVector<double>(N,0));
     numberOfEdges=m->getNumberOfEdges();
     edges=QVector<Edge*>(numberOfEdges);
-    for(int i=0;i<N;i++){
-        for(int j=0;j<N;j++){
-            Laplacian[i][j]=0;
-            weights[i][j]=0;
-        }
-    }
+
     for(int k=0;k<numberOfEdges;k++){
-        Vertex* v0= m->m_edges[k]->getVertex(0);
-        Vertex* v1= m->m_edges[k]->getVertex(1);
+        Vertex* v0= m->getEdge(k)->getVertex(0);
+        Vertex* v1= m->getEdge(k)->getVertex(1);
         int i=v0->getId();
         int j=v1->getId();
-        weights[i][j]=getWeights(m->m_edges[k]);
-        Laplacian[i][j]=-weights[i][j];
-        Laplacian[i][i]+=weights[i][j];
-        Laplacian[j][j]+=weights[i][j];
+        weights[i][j]=getWeights(m->getEdge(k));
+        Laplacian(i,j)=-weights[i][j];
+        Laplacian(i,i)+=weights[i][j];
+        Laplacian(j,j)+=weights[i][j];
 
 
 
     }
 }
+
+void LaplaceSolver::decompose(){
+
+    Eigen::EigenSolver<MatrixXd> es;
+    es.compute(Laplacian);
+
+    eigenvalues = es.eigenvalues();
+    for(int i=0;i<80;i++){
+        functions[i]=es.eigenvectors().col(i);
+    }
+
+    for(int i=0;i<N;i++){
+        std::cout<<eigenvalues[i]<<'\n';
+    }
+
+}
+
+VectorXcd* LaplaceSolver::getEigenValues(){
+    return &eigenvalues;
+
+
+}
+
+VectorXcd* LaplaceSolver::getEigenFunction(int id){
+    return &(functions[id]);
+}
+
+std::complex<double> LaplaceSolver::getEigenValue(int id){
+    return eigenvalues[id];
+}
+
 
 
