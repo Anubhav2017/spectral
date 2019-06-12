@@ -8,6 +8,10 @@
 #include<Eigen/Dense>
 #include<Eigen/Sparse>
 #include<iostream>
+#include <QColor>
+#include <QString>
+#include <QFile>
+#include <QTextStream>
 
 using namespace Eigen;
 typedef Matrix<double, Dynamic, Dynamic> MatrixXd;
@@ -23,13 +27,20 @@ class LaplaceSolver
     QVector<Edge*> edges;
     QVector<Eigen::VectorXcd> functions;
     Eigen::VectorXcd eigenvalues;
+    QVector<QColor> m_colorMapColors;
+    QVector<double> m_colorMapPercentiles;
+
 public:
     LaplaceSolver(Mesh* m);
     double getWeights(Edge *e, Vertex *optionalOuterTriangleVertex);
     void decompose();
-    Eigen::VectorXcd* getEigenValues();
-    Eigen::VectorXcd* getEigenFunction(int id);
-    std::complex<double> getEigenValue(int id);
+    const Eigen::VectorXcd* getEigenValues() const;
+    const Eigen::VectorXcd* getEigenFunction(int id) const;
+    const std::complex<double> getEigenValue(int id) const;
+    const QVector<QColor> generateColorMap(int id) const;
+    const QVector<QColor> generateColorMap2(int id) const;
+
+    void writeMeshWithVertexColors(const QVector<QColor> &colormap, const QString filename);
 
 
 
