@@ -1,0 +1,11 @@
+Known bugs:
+
+1) The CC compiler has only a double precision complex class, so
+   the examples that use single precision complex data will not
+   work properly when compiled with CC.
+
+2) Because function templates that contain default parameters are
+   not allowed by the CC compiler, the examples under the areig 
+   directory will not compile with CC. 
+
+3/17/1997.

@@ -16,29 +16,33 @@
 #include <QDebug>
 using namespace std;
 int main(int argc, char *argv[]) {
+    //cout << "Hello0";
 
-    QApplication a(argc, argv); //Needed for input widgets (like textbox)
-    cout << "Hello0";
+    //QApplication a(argc, argv); //Needed for input widgets (like textbox)
+    qDebug()<<"Hi";
+    //cout << "Hello0"<<std::endl;
 
     //get filename for the input stl
-    QString filename = QFileDialog::getOpenFileName(0, QString("Load triangulation"), QString("../.."), "*.stl");
-    if (filename.isEmpty())
-        return -1;
+//    QString filename = QFileDialog::getOpenFileName(0, QString("Load triangulation"), QString("../.."), "*.stl");
+//    if (filename.isEmpty())
+//        return -1;
 
-    //QString filename="/u/a/agarwala/Desktop/AdaptiveSurfaceReconstruction/project_files/stl_files/sphere-d050-sf1-ml_smoothed.stl";
+    QString filename="/u/a/agarwala/Desktop/AdaptiveSurfaceReconstruction/project_files/stl_files/sphere-d050-sf1-ml_smoothed.stl";
 
     //load stl file
-    cout << "Hello1";
+    qDebug()<<"stl loaded";
     Mesh *m = Mesh::loadFromBinaryStl(filename);
-    cout << "Hello2";
+    qDebug()<<"Mesh loaded";
 
     const int numberOfMeshFaces = m->getNumberOfFaces();
     qDebug() << "mesh loaded. Number of mesh faces" << m->getNumberOfFaces();
 
     LaplaceSolver ls=LaplaceSolver(m);
+    qDebug()<<"ls initiated";
     ls.decompose();
-    QVector<QColor> colorMap=ls.generateColorMap2(10);
-    ls.writeMeshWithVertexColors(colorMap,"functionten");
+    qDebug() << "Mesh decomposition done";
+    //QVector<QColor> colorMap=ls.generateColorMap2(10);
+    //ls.writeMeshWithVertexColors(colorMap,"functionten");
 
     //Compute the quadmesh
     //Note that each cell has to be disk like (i.e. one connected border, no holes)
@@ -96,7 +100,7 @@ int main(int argc, char *argv[]) {
         delete e;
     qDebug() << "All done!";
 
-    return a.exec();
+    return 0;
 }
 
 //int main2(int argc, char *argv[])

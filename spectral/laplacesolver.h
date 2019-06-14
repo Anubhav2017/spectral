@@ -4,31 +4,39 @@
 #include<Mesh/edge.h>
 #include<Mesh/mesh.h>
 #include<Mesh/face.h>
-#include<Eigen/Eigenvalues>
+#include<Eigen/Core>
 #include<Eigen/Dense>
+#include<Eigen/SparseCore>
 #include<Eigen/Sparse>
 #include<iostream>
 #include <QColor>
 #include <QString>
 #include <QFile>
 #include <QTextStream>
+#include<QDebug>
+#include<Spectra/GenEigsSolver.h>
+#include<Spectra/MatOp/SparseGenMatProd.h>
+//typedef Matrix<double, Dynamic, Dynamic> MatrixXd;
 
-using namespace Eigen;
-typedef Matrix<double, Dynamic, Dynamic> MatrixXd;
-typedef Matrix<std::complex<double>,Dynamic,1> VectorXd;
+typedef Eigen::Matrix<std::complex<double>,Eigen::Dynamic,1> VectorXd;
+typedef Eigen::Triplet<double> T;
+
+using namespace Spectra;
 
 class LaplaceSolver
 {
-    MatrixXd Laplacian;
+    QVector<T> tripletList;
+    Eigen::SparseMatrix<double> Laplacian;
     QVector<QVector<double> > weights;
     int N;
     int numberOfEdges;
     Mesh* m_originalMesh;
     QVector<Edge*> edges;
-    QVector<Eigen::VectorXcd> functions;
+    QVector<QVector<std::complex<double> > > functions;
     Eigen::VectorXcd eigenvalues;
     QVector<QColor> m_colorMapColors;
     QVector<double> m_colorMapPercentiles;
+    QVector<double> diagonalentries;
 
 public:
     LaplaceSolver(Mesh* m);

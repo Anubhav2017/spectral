@@ -15,7 +15,7 @@ CXX           = g++
 DEFINES       = -DQT_QML_DEBUG -DQT_WIDGETS_LIB -DQT_GUI_LIB -DQT_CORE_LIB
 CFLAGS        = -pipe -g -Wall -W -D_REENTRANT -fPIC $(DEFINES)
 CXXFLAGS      = -pipe -fopenmp -g -std=gnu++11 -Wall -W -D_REENTRANT -fPIC $(DEFINES)
-INCPATH       = -I../spectral -I. -I../external/Eigen -I../external/gsl/include -I../external/nlopt-2.4.2/include -I../../CGAL-4.13.1/build/include -I../../CGAL-4.13.1/include -isystem /usr/include/qt5 -isystem /usr/include/qt5/QtWidgets -isystem /usr/include/qt5/QtGui -isystem /usr/include/qt5/QtCore -I. -isystem /usr/include/libdrm -I. -I/usr/lib64/qt5/mkspecs/linux-g++
+INCPATH       = -I../spectral -I. -I../external/Eigen -I../external -I../external/gsl/include -I../external/nlopt-2.4.2/include -I../../CGAL-4.13.1/build/include -I../../CGAL-4.13.1/include -isystem /usr/include/qt5 -isystem /usr/include/qt5/QtWidgets -isystem /usr/include/qt5/QtGui -isystem /usr/include/qt5/QtCore -I. -isystem /usr/include/libdrm -I. -I/usr/lib64/qt5/mkspecs/linux-g++
 QMAKE         = /usr/bin/qmake-qt5
 DEL_FILE      = rm -f
 CHK_DIR_EXISTS= test -d
@@ -760,7 +760,7 @@ compiler_moc_header_clean:
 moc_mainwindow.cpp: ../spectral/mainwindow.h \
 		moc_predefs.h \
 		/usr/lib64/qt5/bin/moc
-	/usr/lib64/qt5/bin/moc $(DEFINES) --include ./moc_predefs.h -I/usr/lib64/qt5/mkspecs/linux-g++ -I/u/a/agarwala/Desktop/spectral/spectral -I/u/a/agarwala/Desktop/spectral/external/Eigen -I/u/a/agarwala/Desktop/spectral/external/gsl/include -I/u/a/agarwala/Desktop/spectral/external/nlopt-2.4.2/include -I/u/a/agarwala/Desktop/CGAL-4.13.1/build/include -I/u/a/agarwala/Desktop/CGAL-4.13.1/include -I/usr/include/qt5 -I/usr/include/qt5/QtWidgets -I/usr/include/qt5/QtGui -I/usr/include/qt5/QtCore -I. -I/usr/include/c++/4.8.5 -I/usr/include/c++/4.8.5/x86_64-redhat-linux -I/usr/include/c++/4.8.5/backward -I/usr/lib/gcc/x86_64-redhat-linux/4.8.5/include -I/usr/local/include -I/usr/include ../spectral/mainwindow.h -o moc_mainwindow.cpp
+	/usr/lib64/qt5/bin/moc $(DEFINES) --include ./moc_predefs.h -I/usr/lib64/qt5/mkspecs/linux-g++ -I/u/a/agarwala/Desktop/spectral/spectral -I/u/a/agarwala/Desktop/spectral/external/Eigen -I/u/a/agarwala/Desktop/spectral/external -I/u/a/agarwala/Desktop/spectral/external/gsl/include -I/u/a/agarwala/Desktop/spectral/external/nlopt-2.4.2/include -I/u/a/agarwala/Desktop/CGAL-4.13.1/build/include -I/u/a/agarwala/Desktop/CGAL-4.13.1/include -I/usr/include/qt5 -I/usr/include/qt5/QtWidgets -I/usr/include/qt5/QtGui -I/usr/include/qt5/QtCore -I. -I/usr/include/c++/4.8.5 -I/usr/include/c++/4.8.5/x86_64-redhat-linux -I/usr/include/c++/4.8.5/backward -I/usr/lib/gcc/x86_64-redhat-linux/4.8.5/include -I/usr/local/include -I/usr/include ../spectral/mainwindow.h -o moc_mainwindow.cpp
 
 compiler_moc_source_make_all:
 compiler_moc_source_clean:
@@ -786,7 +786,6 @@ main.o: ../spectral/main.cpp ../spectral/laplacesolver.h \
 		../spectral/Mesh/edge.h \
 		../spectral/Mesh/mesh.h \
 		../spectral/Mesh/face.h \
-		../spectral/Eigen/Eigenvalues \
 		../spectral/Eigen/Core \
 		../spectral/Eigen/src/Core/util/DisableStupidWarnings.h \
 		../spectral/Eigen/src/Core/util/Macros.h \
@@ -926,42 +925,43 @@ main.o: ../spectral/main.cpp ../spectral/laplacesolver.h \
 		../spectral/Eigen/src/Core/Assign_MKL.h \
 		../spectral/Eigen/src/Core/GlobalFunctions.h \
 		../spectral/Eigen/src/Core/util/ReenableStupidWarnings.h \
+		../spectral/Eigen/Dense \
+		../spectral/Eigen/LU \
+		../spectral/Eigen/src/misc/Kernel.h \
+		../spectral/Eigen/src/misc/Image.h \
+		../spectral/Eigen/src/LU/FullPivLU.h \
+		../spectral/Eigen/src/LU/PartialPivLU.h \
+		../spectral/Eigen/src/misc/lapacke.h \
+		../spectral/Eigen/src/misc/lapacke_mangling.h \
+		../spectral/Eigen/src/LU/PartialPivLU_LAPACKE.h \
+		../spectral/Eigen/src/LU/Determinant.h \
+		../spectral/Eigen/src/LU/InverseImpl.h \
+		../spectral/Eigen/src/LU/arch/Inverse_SSE.h \
 		../spectral/Eigen/Cholesky \
 		../spectral/Eigen/src/Cholesky/LLT.h \
 		../spectral/Eigen/src/Cholesky/LDLT.h \
-		../spectral/Eigen/src/misc/lapacke.h \
-		../spectral/Eigen/src/misc/lapacke_mangling.h \
 		../spectral/Eigen/src/Cholesky/LLT_LAPACKE.h \
+		../spectral/Eigen/QR \
 		../spectral/Eigen/Jacobi \
 		../spectral/Eigen/src/Jacobi/Jacobi.h \
 		../spectral/Eigen/Householder \
 		../spectral/Eigen/src/Householder/Householder.h \
 		../spectral/Eigen/src/Householder/HouseholderSequence.h \
 		../spectral/Eigen/src/Householder/BlockHouseholder.h \
-		../spectral/Eigen/LU \
-		../spectral/Eigen/src/misc/Kernel.h \
-		../spectral/Eigen/src/misc/Image.h \
-		../spectral/Eigen/src/LU/FullPivLU.h \
-		../spectral/Eigen/src/LU/PartialPivLU.h \
-		../spectral/Eigen/src/LU/PartialPivLU_LAPACKE.h \
-		../spectral/Eigen/src/LU/Determinant.h \
-		../spectral/Eigen/src/LU/InverseImpl.h \
-		../spectral/Eigen/src/LU/arch/Inverse_SSE.h \
-		../spectral/Eigen/Geometry \
-		../spectral/Eigen/SVD \
-		../spectral/Eigen/QR \
 		../spectral/Eigen/src/QR/HouseholderQR.h \
 		../spectral/Eigen/src/QR/FullPivHouseholderQR.h \
 		../spectral/Eigen/src/QR/ColPivHouseholderQR.h \
 		../spectral/Eigen/src/QR/CompleteOrthogonalDecomposition.h \
 		../spectral/Eigen/src/QR/HouseholderQR_LAPACKE.h \
 		../spectral/Eigen/src/QR/ColPivHouseholderQR_LAPACKE.h \
+		../spectral/Eigen/SVD \
 		../spectral/Eigen/src/misc/RealSvd2x2.h \
 		../spectral/Eigen/src/SVD/UpperBidiagonalization.h \
 		../spectral/Eigen/src/SVD/SVDBase.h \
 		../spectral/Eigen/src/SVD/JacobiSVD.h \
 		../spectral/Eigen/src/SVD/BDCSVD.h \
 		../spectral/Eigen/src/SVD/JacobiSVD_LAPACKE.h \
+		../spectral/Eigen/Geometry \
 		../spectral/Eigen/src/Geometry/OrthoMethods.h \
 		../spectral/Eigen/src/Geometry/EulerAngles.h \
 		../spectral/Eigen/src/Geometry/Homogeneous.h \
@@ -977,6 +977,7 @@ main.o: ../spectral/main.cpp ../spectral/laplacesolver.h \
 		../spectral/Eigen/src/Geometry/AlignedBox.h \
 		../spectral/Eigen/src/Geometry/Umeyama.h \
 		../spectral/Eigen/src/Geometry/arch/Geometry_SSE.h \
+		../spectral/Eigen/Eigenvalues \
 		../spectral/Eigen/src/Eigenvalues/Tridiagonalization.h \
 		../spectral/Eigen/src/Eigenvalues/RealSchur.h \
 		../spectral/Eigen/src/Eigenvalues/HessenbergDecomposition.h \
@@ -991,8 +992,6 @@ main.o: ../spectral/main.cpp ../spectral/laplacesolver.h \
 		../spectral/Eigen/src/Eigenvalues/RealSchur_LAPACKE.h \
 		../spectral/Eigen/src/Eigenvalues/ComplexSchur_LAPACKE.h \
 		../spectral/Eigen/src/Eigenvalues/SelfAdjointEigenSolver_LAPACKE.h \
-		../spectral/Eigen/Dense \
-		../spectral/Eigen/Sparse \
 		../spectral/Eigen/SparseCore \
 		../spectral/Eigen/src/SparseCore/SparseUtil.h \
 		../spectral/Eigen/src/SparseCore/SparseMatrixBase.h \
@@ -1023,6 +1022,7 @@ main.o: ../spectral/main.cpp ../spectral/laplacesolver.h \
 		../spectral/Eigen/src/SparseCore/SparsePermutation.h \
 		../spectral/Eigen/src/SparseCore/SparseFuzzy.h \
 		../spectral/Eigen/src/SparseCore/SparseSolverBase.h \
+		../spectral/Eigen/Sparse \
 		../spectral/Eigen/OrderingMethods \
 		../spectral/Eigen/src/OrderingMethods/Amd.h \
 		../spectral/Eigen/src/Core/util/NonMPL2.h \
@@ -1061,6 +1061,19 @@ main.o: ../spectral/main.cpp ../spectral/laplacesolver.h \
 		../spectral/Eigen/src/IterativeLinearSolvers/BiCGSTAB.h \
 		../spectral/Eigen/src/IterativeLinearSolvers/IncompleteLUT.h \
 		../spectral/Eigen/src/IterativeLinearSolvers/IncompleteCholesky.h \
+		../external/Spectra/GenEigsSolver.h \
+		../external/Spectra/GenEigsBase.h \
+		../external/Spectra/Util/TypeTraits.h \
+		../external/Spectra/Util/SelectionRule.h \
+		../external/Spectra/Util/CompInfo.h \
+		../external/Spectra/Util/SimpleRandom.h \
+		../external/Spectra/MatOp/internal/ArnoldiOp.h \
+		../external/Spectra/LinAlg/UpperHessenbergQR.h \
+		../external/Spectra/LinAlg/DoubleShiftQR.h \
+		../external/Spectra/LinAlg/UpperHessenbergEigen.h \
+		../external/Spectra/LinAlg/Arnoldi.h \
+		../external/Spectra/MatOp/DenseGenMatProd.h \
+		../external/Spectra/MatOp/SparseGenMatProd.h \
 		../spectral/mainwindow.h \
 		../spectral/controller.h \
 		../spectral/CellMesh/cellmesh.h \
@@ -1075,7 +1088,9 @@ main.o: ../spectral/main.cpp ../spectral/laplacesolver.h \
 		../spectral/BSpline/bsplinepatchnetwork.h \
 		../spectral/MBSI/subdivisionabstractmetric.h \
 		../spectral/stlwriter.h \
-		../spectral/MBSI/subsurfacetree.h
+		../spectral/MBSI/subsurfacetree.h \
+		../external/Eigen/SparseCore \
+		../external/Eigen/Core
 	$(CXX) -c $(CXXFLAGS) $(INCPATH) -o main.o ../spectral/main.cpp
 
 mainwindow.o: ../spectral/mainwindow.cpp ../spectral/mainwindow.h \
@@ -2438,7 +2453,9 @@ viewpointcandidategenerator.o: ../spectral/MBSI/viewpointcandidategenerator.cpp 
 		../spectral/BSpline/bsplinecurve.h \
 		../spectral/MBSI/subsurfacetree.h \
 		../spectral/MBSI/subdivisionabstractmetric.h \
-		../spectral/splineevaluator.h
+		../spectral/splineevaluator.h \
+		../external/Eigen/SparseCore \
+		../external/Eigen/Core
 	$(CXX) -c $(CXXFLAGS) $(INCPATH) -o viewpointcandidategenerator.o ../spectral/MBSI/viewpointcandidategenerator.cpp
 
 subdivisionthinplateenergymetric.o: ../spectral/MBSI/subdivisionthinplateenergymetric.cpp ../spectral/MBSI/subdivisionthinplateenergymetric.h \
@@ -2660,6 +2677,8 @@ subdivisionthinplateenergymetric.o: ../spectral/MBSI/subdivisionthinplateenergym
 		../spectral/Eigen/src/SparseLU/SparseLU.h \
 		../spectral/BSpline/bsplinecurve.h \
 		../spectral/energymatrixgenerator.h \
+		../external/Eigen/SparseCore \
+		../external/Eigen/Core \
 		../external/Eigen/Sparse \
 		../spectral/Eigen/SparseCholesky \
 		../spectral/Eigen/src/SparseCholesky/SimplicialCholesky.h \
@@ -3140,6 +3159,8 @@ splinefitter.o: ../spectral/splinefitter.cpp ../spectral/splinefitter.h \
 		../spectral/BSpline/bsplineproperties.h \
 		../spectral/BSpline/bsplinecurve.h \
 		../external/Eigen/Sparse \
+		../external/Eigen/SparseCore \
+		../external/Eigen/Core \
 		../spectral/Eigen/SparseCholesky \
 		../spectral/Eigen/src/SparseCholesky/SimplicialCholesky.h \
 		../spectral/Eigen/src/SparseCholesky/SimplicialCholesky_impl.h \
@@ -3197,7 +3218,7 @@ splinefitter.o: ../spectral/splinefitter.cpp ../spectral/splinefitter.h \
 		../spectral/Eigen/src/Geometry/AlignedBox.h \
 		../spectral/Eigen/src/Geometry/Umeyama.h \
 		../spectral/Eigen/src/Geometry/arch/Geometry_SSE.h \
-		../external/Eigen/Eigenvalues \
+		../spectral/Eigen/Eigenvalues \
 		../spectral/Eigen/src/Eigenvalues/Tridiagonalization.h \
 		../spectral/Eigen/src/Eigenvalues/RealSchur.h \
 		../spectral/Eigen/src/Eigenvalues/HessenbergDecomposition.h \
@@ -3494,6 +3515,7 @@ parameteroptimizer.o: ../spectral/parameteroptimizer.cpp ../spectral/parameterop
 		../spectral/BSpline/bsplineproperties.h \
 		../spectral/BSpline/bsplinecurve.h \
 		../external/Eigen/Dense \
+		../external/Eigen/Core \
 		../spectral/Eigen/LU \
 		../spectral/Eigen/src/misc/Kernel.h \
 		../spectral/Eigen/src/misc/Image.h \
@@ -3545,7 +3567,7 @@ parameteroptimizer.o: ../spectral/parameteroptimizer.cpp ../spectral/parameterop
 		../spectral/Eigen/src/Geometry/AlignedBox.h \
 		../spectral/Eigen/src/Geometry/Umeyama.h \
 		../spectral/Eigen/src/Geometry/arch/Geometry_SSE.h \
-		../external/Eigen/Eigenvalues \
+		../spectral/Eigen/Eigenvalues \
 		../spectral/Eigen/src/Eigenvalues/Tridiagonalization.h \
 		../spectral/Eigen/src/Eigenvalues/RealSchur.h \
 		../spectral/Eigen/src/Eigenvalues/HessenbergDecomposition.h \
@@ -4000,6 +4022,8 @@ splineevaluator.o: ../spectral/splineevaluator.cpp ../spectral/splineevaluator.h
 		../spectral/BSpline/bsplinesurface.h \
 		../spectral/BSpline/bsplineproperties.h \
 		../spectral/BSpline/bsplinecurve.h \
+		../external/Eigen/SparseCore \
+		../external/Eigen/Core \
 		../spectral/parameteroptimizer.h \
 		../external/Eigen/Dense \
 		../spectral/Eigen/LU \
@@ -4053,7 +4077,7 @@ splineevaluator.o: ../spectral/splineevaluator.cpp ../spectral/splineevaluator.h
 		../spectral/Eigen/src/Geometry/AlignedBox.h \
 		../spectral/Eigen/src/Geometry/Umeyama.h \
 		../spectral/Eigen/src/Geometry/arch/Geometry_SSE.h \
-		../external/Eigen/Eigenvalues \
+		../spectral/Eigen/Eigenvalues \
 		../spectral/Eigen/src/Eigenvalues/Tridiagonalization.h \
 		../spectral/Eigen/src/Eigenvalues/RealSchur.h \
 		../spectral/Eigen/src/Eigenvalues/HessenbergDecomposition.h \
@@ -4296,6 +4320,8 @@ controller.o: ../spectral/controller.cpp ../spectral/controller.h \
 		../spectral/MBSI/subdivisionabstractmetric.h \
 		../spectral/stlwriter.h \
 		../spectral/MBSI/subsurfacetree.h \
+		../external/Eigen/SparseCore \
+		../external/Eigen/Core \
 		../spectral/SurfaceTessellation/surfacevoronoigenerator.h \
 		../spectral/SurfaceTessellation/priorityqueue.h \
 		../spectral/SurfaceTessellation/quadmeshgenerator.h \
@@ -4370,7 +4396,7 @@ controller.o: ../spectral/controller.cpp ../spectral/controller.h \
 		../spectral/Eigen/src/Geometry/AlignedBox.h \
 		../spectral/Eigen/src/Geometry/Umeyama.h \
 		../spectral/Eigen/src/Geometry/arch/Geometry_SSE.h \
-		../external/Eigen/Eigenvalues \
+		../spectral/Eigen/Eigenvalues \
 		../spectral/Eigen/src/Eigenvalues/Tridiagonalization.h \
 		../spectral/Eigen/src/Eigenvalues/RealSchur.h \
 		../spectral/Eigen/src/Eigenvalues/HessenbergDecomposition.h \
@@ -4454,8 +4480,8 @@ controller.o: ../spectral/controller.cpp ../spectral/controller.h \
 
 energymatrixgenerator.o: ../spectral/energymatrixgenerator.cpp ../spectral/energymatrixgenerator.h \
 		../spectral/BSpline/bsplineproperties.h \
-		../spectral/Eigen/SparseCore \
-		../spectral/Eigen/Core \
+		../external/Eigen/SparseCore \
+		../external/Eigen/Core \
 		../spectral/Eigen/src/Core/util/DisableStupidWarnings.h \
 		../spectral/Eigen/src/Core/util/Macros.h \
 		../spectral/Eigen/src/Core/util/MKL_support.h \
@@ -4883,7 +4909,6 @@ laplacesolver.o: ../spectral/laplacesolver.cpp ../spectral/laplacesolver.h \
 		../spectral/Mesh/edge.h \
 		../spectral/Mesh/mesh.h \
 		../spectral/Mesh/face.h \
-		../spectral/Eigen/Eigenvalues \
 		../spectral/Eigen/Core \
 		../spectral/Eigen/src/Core/util/DisableStupidWarnings.h \
 		../spectral/Eigen/src/Core/util/Macros.h \
@@ -5023,42 +5048,43 @@ laplacesolver.o: ../spectral/laplacesolver.cpp ../spectral/laplacesolver.h \
 		../spectral/Eigen/src/Core/Assign_MKL.h \
 		../spectral/Eigen/src/Core/GlobalFunctions.h \
 		../spectral/Eigen/src/Core/util/ReenableStupidWarnings.h \
+		../spectral/Eigen/Dense \
+		../spectral/Eigen/LU \
+		../spectral/Eigen/src/misc/Kernel.h \
+		../spectral/Eigen/src/misc/Image.h \
+		../spectral/Eigen/src/LU/FullPivLU.h \
+		../spectral/Eigen/src/LU/PartialPivLU.h \
+		../spectral/Eigen/src/misc/lapacke.h \
+		../spectral/Eigen/src/misc/lapacke_mangling.h \
+		../spectral/Eigen/src/LU/PartialPivLU_LAPACKE.h \
+		../spectral/Eigen/src/LU/Determinant.h \
+		../spectral/Eigen/src/LU/InverseImpl.h \
+		../spectral/Eigen/src/LU/arch/Inverse_SSE.h \
 		../spectral/Eigen/Cholesky \
 		../spectral/Eigen/src/Cholesky/LLT.h \
 		../spectral/Eigen/src/Cholesky/LDLT.h \
-		../spectral/Eigen/src/misc/lapacke.h \
-		../spectral/Eigen/src/misc/lapacke_mangling.h \
 		../spectral/Eigen/src/Cholesky/LLT_LAPACKE.h \
+		../spectral/Eigen/QR \
 		../spectral/Eigen/Jacobi \
 		../spectral/Eigen/src/Jacobi/Jacobi.h \
 		../spectral/Eigen/Householder \
 		../spectral/Eigen/src/Householder/Householder.h \
 		../spectral/Eigen/src/Householder/HouseholderSequence.h \
 		../spectral/Eigen/src/Householder/BlockHouseholder.h \
-		../spectral/Eigen/LU \
-		../spectral/Eigen/src/misc/Kernel.h \
-		../spectral/Eigen/src/misc/Image.h \
-		../spectral/Eigen/src/LU/FullPivLU.h \
-		../spectral/Eigen/src/LU/PartialPivLU.h \
-		../spectral/Eigen/src/LU/PartialPivLU_LAPACKE.h \
-		../spectral/Eigen/src/LU/Determinant.h \
-		../spectral/Eigen/src/LU/InverseImpl.h \
-		../spectral/Eigen/src/LU/arch/Inverse_SSE.h \
-		../spectral/Eigen/Geometry \
-		../spectral/Eigen/SVD \
-		../spectral/Eigen/QR \
 		../spectral/Eigen/src/QR/HouseholderQR.h \
 		../spectral/Eigen/src/QR/FullPivHouseholderQR.h \
 		../spectral/Eigen/src/QR/ColPivHouseholderQR.h \
 		../spectral/Eigen/src/QR/CompleteOrthogonalDecomposition.h \
 		../spectral/Eigen/src/QR/HouseholderQR_LAPACKE.h \
 		../spectral/Eigen/src/QR/ColPivHouseholderQR_LAPACKE.h \
+		../spectral/Eigen/SVD \
 		../spectral/Eigen/src/misc/RealSvd2x2.h \
 		../spectral/Eigen/src/SVD/UpperBidiagonalization.h \
 		../spectral/Eigen/src/SVD/SVDBase.h \
 		../spectral/Eigen/src/SVD/JacobiSVD.h \
 		../spectral/Eigen/src/SVD/BDCSVD.h \
 		../spectral/Eigen/src/SVD/JacobiSVD_LAPACKE.h \
+		../spectral/Eigen/Geometry \
 		../spectral/Eigen/src/Geometry/OrthoMethods.h \
 		../spectral/Eigen/src/Geometry/EulerAngles.h \
 		../spectral/Eigen/src/Geometry/Homogeneous.h \
@@ -5074,6 +5100,7 @@ laplacesolver.o: ../spectral/laplacesolver.cpp ../spectral/laplacesolver.h \
 		../spectral/Eigen/src/Geometry/AlignedBox.h \
 		../spectral/Eigen/src/Geometry/Umeyama.h \
 		../spectral/Eigen/src/Geometry/arch/Geometry_SSE.h \
+		../spectral/Eigen/Eigenvalues \
 		../spectral/Eigen/src/Eigenvalues/Tridiagonalization.h \
 		../spectral/Eigen/src/Eigenvalues/RealSchur.h \
 		../spectral/Eigen/src/Eigenvalues/HessenbergDecomposition.h \
@@ -5088,8 +5115,6 @@ laplacesolver.o: ../spectral/laplacesolver.cpp ../spectral/laplacesolver.h \
 		../spectral/Eigen/src/Eigenvalues/RealSchur_LAPACKE.h \
 		../spectral/Eigen/src/Eigenvalues/ComplexSchur_LAPACKE.h \
 		../spectral/Eigen/src/Eigenvalues/SelfAdjointEigenSolver_LAPACKE.h \
-		../spectral/Eigen/Dense \
-		../spectral/Eigen/Sparse \
 		../spectral/Eigen/SparseCore \
 		../spectral/Eigen/src/SparseCore/SparseUtil.h \
 		../spectral/Eigen/src/SparseCore/SparseMatrixBase.h \
@@ -5120,6 +5145,7 @@ laplacesolver.o: ../spectral/laplacesolver.cpp ../spectral/laplacesolver.h \
 		../spectral/Eigen/src/SparseCore/SparsePermutation.h \
 		../spectral/Eigen/src/SparseCore/SparseFuzzy.h \
 		../spectral/Eigen/src/SparseCore/SparseSolverBase.h \
+		../spectral/Eigen/Sparse \
 		../spectral/Eigen/OrderingMethods \
 		../spectral/Eigen/src/OrderingMethods/Amd.h \
 		../spectral/Eigen/src/Core/util/NonMPL2.h \
@@ -5157,7 +5183,20 @@ laplacesolver.o: ../spectral/laplacesolver.cpp ../spectral/laplacesolver.h \
 		../spectral/Eigen/src/IterativeLinearSolvers/LeastSquareConjugateGradient.h \
 		../spectral/Eigen/src/IterativeLinearSolvers/BiCGSTAB.h \
 		../spectral/Eigen/src/IterativeLinearSolvers/IncompleteLUT.h \
-		../spectral/Eigen/src/IterativeLinearSolvers/IncompleteCholesky.h
+		../spectral/Eigen/src/IterativeLinearSolvers/IncompleteCholesky.h \
+		../external/Spectra/GenEigsSolver.h \
+		../external/Spectra/GenEigsBase.h \
+		../external/Spectra/Util/TypeTraits.h \
+		../external/Spectra/Util/SelectionRule.h \
+		../external/Spectra/Util/CompInfo.h \
+		../external/Spectra/Util/SimpleRandom.h \
+		../external/Spectra/MatOp/internal/ArnoldiOp.h \
+		../external/Spectra/LinAlg/UpperHessenbergQR.h \
+		../external/Spectra/LinAlg/DoubleShiftQR.h \
+		../external/Spectra/LinAlg/UpperHessenbergEigen.h \
+		../external/Spectra/LinAlg/Arnoldi.h \
+		../external/Spectra/MatOp/DenseGenMatProd.h \
+		../external/Spectra/MatOp/SparseGenMatProd.h
 	$(CXX) -c $(CXXFLAGS) $(INCPATH) -o laplacesolver.o ../spectral/laplacesolver.cpp
 
 moc_mainwindow.o: moc_mainwindow.cpp 

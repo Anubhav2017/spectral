@@ -1,0 +1,29 @@
+This is the ARPACK++ doc directory.
+
+File included in this directory:
+
+  install.txt:
+
+    instructions on how to install the libraries required by ARPACK++.
+
+  arpackpp.ps:
+
+    a post-script version of
+
+    Gomes, F. & Sorensen, D.  ARPACK++: a c++ implementation
+    of ARPACK eigenvalue package. 1997.
+
+  Makefile.UMFPACK:
+
+    a makefile that should be used to generate a library archive
+    containing all UMFPACK object files.
+
+  bugs.txt:
+
+    a list of known ARPACK++ bugs.
+
+  structure.txt
+
+    a list of all ARPACK++ classes, their base classes, member
+    functions and variables.
+

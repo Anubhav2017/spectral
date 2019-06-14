@@ -111,6 +111,7 @@ QMAKE_LFLAGS +=  -fopenmp
 # Eigen v.3.3.2 [2017_02_05]
 # http://eigen.tuxfamily.org/index.php?title=Main_Page
 INCLUDEPATH += "../external/Eigen"
+INCLUDEPATH += "../external"
 
 # GNU Scientific Library (GSL) [2017_02_05]
 # -> Linux (v.2.3): https://www.gnu.org/software/gsl/

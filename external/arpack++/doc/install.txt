@@ -1,0 +1,58 @@
+ARPACK++ installation notes.
+
+Before using ARPACK++ it is necessary to install some libraries
+required by the software. Some hints on how to install these 
+libraries are given below.
+
+  a) ARPACK (fortran version):
+
+  ARPACK can be easily installed by just following the instructions
+  given in its manual. ARPACK version 1 is not compatible with
+  ARPACK++, so be sure that you have the latest version.
+
+  b) BLAS and LAPACK (fortran versions):
+
+  BLAS and LAPACK routines required by ARPACK are distributed along
+  with the software, but it is better to use vendor-optimized 
+  versions of these libraries if they are available. LAPACK also
+  includes a subset of BLAS files, so the user must take some care
+  while installing this libraries to avoid code duplication.
+
+  The LAPACK library on your system must be the public release (the
+  current release is version 2.0).
+
+  c) SUPERLU:
+
+  When installing SuperLU, the user must certify that the directive
+  -DUSE_VENDOR_BLAS was included in the "make.inc" file.
+
+  Moreover, at the present time, SuperLU prints some messages about
+  the ordering being used prior to the LU factorization. To avoid
+  displaying these messages, the user should delete all "printf"
+  commands contained in the "get_perm_c.c" file.
+
+  d) UMFPACK:
+
+  Presently, the UMFPACK library does not include instructions on
+  how to generate a library file (one with extension ".a"). 
+  Because of that, we decide to include in this directory a file, 
+  called "Makefile.UMFPACK", that can be used to combine all
+  UMFPACK object files into a single archive. Once copied to
+  the UMFPACK directory, this file can be used to "make" a ".a"
+  archive by just typing "make -f Makefile.UMFPACK". 
+
+
+In view of the fact that ARPACK++ contains some code written in
+FORTRAN, C and c++ languages, some care is also required when 
+defining the FORTRAN libraries that must be linked to generate
+an executable file. These libraries are very platform dependent
+and, frequently, not so easy to determine. We have included (in 
+the main arpack++ directory) two files, Makefile.g++ and 
+Makefile.CC, that can be used to compile and link the examples
+distributed along with arpack++ using the g++ and CC compilers
+in a Sun workstation. Future versions of the software will 
+include more sample makefiles to help the user of other machines 
+and compilers.
+
+
+

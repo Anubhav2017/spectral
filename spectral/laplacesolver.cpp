@@ -40,14 +40,20 @@ double LaplaceSolver::getWeights(Edge *e, Vertex *optionalOuterTriangleVertex=0)
         }
         return result;
 }
-LaplaceSolver::LaplaceSolver(Mesh* m){
+LaplaceSolver::LaplaceSolver(Mesh* m):tripletList(0){
     m_originalMesh=m;
     N=m->getNumberOfVertices();
-    functions=QVector<Eigen::VectorXcd>(80,Eigen::VectorXcd(N));
-    Laplacian=MatrixXd(N,N);
+
+    Laplacian=Eigen::SparseMatrix<double>(N,N);
     weights=QVector<QVector<double> >(N,QVector<double>(N,0));
     numberOfEdges=m->getNumberOfEdges();
     edges=QVector<Edge*>(numberOfEdges);
+    for(int i=0;i<10;i++){
+        m_colorMapColors.append(QColor(i));
+    }
+    diagonalentries.resize(N);
+    functions=QVector<QVector<std::complex<double> > >(3,QVector<complex<double> >(N));
+
 
     for(int k=0;k<numberOfEdges;k++){
         Vertex* v0= m->getEdge(k)->getVertex(0);
@@ -55,151 +61,191 @@ LaplaceSolver::LaplaceSolver(Mesh* m){
         int i=v0->getId();
         int j=v1->getId();
         weights[i][j]=getWeights(m->getEdge(k));
-        Laplacian(i,j)=-weights[i][j];
-        Laplacian(i,i)+=weights[i][j];
-        Laplacian(j,j)+=weights[i][j];
 
-
-
+        tripletList.push_back(T(i,j,-weights[i][j]));
+        diagonalentries[i]+=weights[i][j];
+        diagonalentries[j]+=weights[i][j];
     }
+
+    for(int i=0;i<N;i++){
+        tripletList.push_back(T(i,i,diagonalentries[i]));
+    }
+    Laplacian.setFromTriplets(tripletList.begin(),tripletList.end());
+
 }
 
 void LaplaceSolver::decompose(){
 
-    Eigen::EigenSolver<MatrixXd> es;
-    es.compute(Laplacian);
+    //qDebug()<<"Hi0";
+    //Eigen::EigenSolver<Eigen::SparseMatrix<double> > es;
+    //qDebug()<<"Hi1"<<endl;
 
-    eigenvalues = es.eigenvalues();
-    for(int i=0;i<80;i++){
-        functions[i]=es.eigenvectors().col(i);
-    }
+    //cout<<Laplacian<<endl;
+    //es.compute(Laplacian);
 
-    for(int i=0;i<N;i++){
-        std::cout<<eigenvalues[i]<<'\n';
+    qDebug()<<"Hi3";
+
+    int nev=3;
+    int ncv=6;
+
+    SparseGenMatProd<double> op(Laplacian);
+    GenEigsSolver< double, LARGEST_MAGN, SparseGenMatProd<double> > eigs(&op,nev,ncv);
+
+    eigs.init();
+    int nconv=eigs.compute();
+
+
+    eigenvalues = eigs.eigenvalues();
+    qDebug()<<"Hi4";
+    qDebug()<<eigs.eigenvectors().rows()<<"x"<<eigs.eigenvectors().cols();
+
+
+        //eigs.eigenvectors(i).resize(N,1);
+    Eigen::Matrix<std::complex<double>, Eigen::Dynamic, Eigen::Dynamic > vec=eigs.eigenvectors();
+       // qDebug()<<vec.rows()<<"x"<<vec.cols();
+        //functions.append(eigs.eigenvectors(i));
+    int r=eigs.eigenvectors().rows();
+    int c=eigs.eigenvectors().cols();
+    for(int i=0;i<nev;i++){
+        for(int j=0;j<N;j++){
+            functions[i][j]=vec(j,i);
+        }
     }
+    for(int j=0;j<N;j++){
+        cout<<functions[0][j]<<endl;
+    }
+    //cout<<functions[0]<<endl;
+
+
+    //cout<<functions[0]<<endl;
+//    for(int i=0;i<80;i++){
+//        functions[i]=es.eigenvectors().col(i);
+//    }
+
+//    for(int i=0;i<N;i++){
+//        std::cout<<eigenvalues[i]<<'\n';
+//    }
 
 }
 
-const VectorXcd* LaplaceSolver::getEigenValues() const{
+const Eigen::VectorXcd* LaplaceSolver::getEigenValues() const{
     return &eigenvalues;
 
 
 }
 
-const VectorXcd* LaplaceSolver::getEigenFunction(int id) const{
-    return &(functions[id]);
-}
+//const Eigen::VectorXcd* LaplaceSolver::getEigenFunction(int id) const{
+//    return &(functions[id]);
+//}
 
 const  std::complex<double> LaplaceSolver::getEigenValue(int id) const{
     return eigenvalues[id];
 }
 
-const QVector<QColor> LaplaceSolver::generateColorMap(int id) const{
-   Eigen::VectorXcd eigenvector=functions[id];
-   QVector<double> realvector(N,0);
-   for(int i=0;i<N;i++){
-       realvector[i]=eigenvector[i].real();
-   }
-   const int numSamplePoints = N;
+//const QVector<QColor> LaplaceSolver::generateColorMap(int id) const{
+//   Eigen::VectorXcd eigenvector=functions[id];
+//   QVector<double> realvector(N,0);
+//   for(int i=0;i<N;i++){
+//       realvector[i]=eigenvector[i].real();
+//   }
+//   const int numSamplePoints = N;
 
-  // QVector<double> metricValues(numSamplePoints);
+//  // QVector<double> metricValues(numSamplePoints);
 
 
-//   for (int i = 0; i < numSamplePoints; i++) {
-//       const int surfId = triangulation->getSurfaceIdOfVertex(i);
-//       const QVector2D param = triangulation->getParameterValueForVertex(i);
-//       metricValues[i] = metric->evaluatePoint(bSplines.at(surfId), param.x(), param.y());
+////   for (int i = 0; i < numSamplePoints; i++) {
+////       const int surfId = triangulation->getSurfaceIdOfVertex(i);
+////       const QVector2D param = triangulation->getParameterValueForVertex(i);
+////       metricValues[i] = metric->evaluatePoint(bSplines.at(surfId), param.x(), param.y());
+////   }
+
+//   //min/max is not thread safe -> own for loop
+//   double min = realvector[0];
+//   double max = realvector[0];
+//   for (int i = 1; i < numSamplePoints; i++) {
+//       const double value = realvector[i];
+//       if (value < min)
+//           min = value;
+//       if (value > max)
+//           max = value;
 //   }
 
-   //min/max is not thread safe -> own for loop
-   double min = realvector[0];
-   double max = realvector[0];
-   for (int i = 1; i < numSamplePoints; i++) {
-       const double value = realvector[i];
-       if (value < min)
-           min = value;
-       if (value > max)
-           max = value;
-   }
 
 
+//   const double valueRange = max-min ;
 
-   const double valueRange = max-min ;
-
-   QVector<QColor> colorMap(numSamplePoints);
-
-   for (int i = 0; i < numSamplePoints; i++) {
-       double relativeValue = (realvector[i] - min) / valueRange;
-
-       if (relativeValue <= 0.0f) {
-           colorMap[i] = m_colorMapColors[0];
-       } else if (relativeValue >= 1.0f) {
-           colorMap[i] = m_colorMapColors.last();
-       } else {
-           int interval = 0;
-           while (relativeValue > m_colorMapPercentiles[interval + 1]) //value < 1 = colormapPercentiles.last() (due to above if-check)
-               interval++;
-
-           const double lower = m_colorMapPercentiles[interval];
-           const double upper = m_colorMapPercentiles[interval + 1];
-           const double intervalWidth = upper - lower;
-           const double lambda = (relativeValue - lower)/intervalWidth;    //(1 - lambda) * lower + (lambda * upper) = relativeValue
-
-           const QVector3D col0(m_colorMapColors[interval].red(), m_colorMapColors[interval].green(), m_colorMapColors[interval].blue());
-           const QVector3D col1(m_colorMapColors[interval + 1].red(), m_colorMapColors[interval + 1].green(), m_colorMapColors[interval + 1].blue());
-           const QVector3D col = (1 - lambda) * col0 + lambda * col1;
-
-           colorMap[i] = QColor(floor(col.x() + 0.5), floor(col.y() + 0.5), floor(col.z() + 0.5));
-       }
-   }
-
-   return colorMap;
-
-}
-const QVector<QColor> LaplaceSolver::generateColorMap2(int id) const{
-   Eigen::VectorXcd eigenvector=functions[id];
-   QVector<double> realvector(N,0);
-   for(int i=0;i<N;i++){
-       realvector[i]=eigenvector[i].real();
-   }
-   const int numSamplePoints = N;
-
-  // QVector<double> metricValues(numSamplePoints);
-
+//   QVector<QColor> colorMap(numSamplePoints);
 
 //   for (int i = 0; i < numSamplePoints; i++) {
-//       const int surfId = triangulation->getSurfaceIdOfVertex(i);
-//       const QVector2D param = triangulation->getParameterValueForVertex(i);
-//       metricValues[i] = metric->evaluatePoint(bSplines.at(surfId), param.x(), param.y());
+//       double relativeValue = (realvector[i] - min) / valueRange;
+
+//       if (relativeValue <= 0.0f) {
+//           colorMap[i] = m_colorMapColors[0];
+//       } else if (relativeValue >= 1.0f) {
+//           colorMap[i] = m_colorMapColors.last();
+//       } else {
+//           int interval = 0;
+//           while (relativeValue > m_colorMapPercentiles[interval + 1]) //value < 1 = colormapPercentiles.last() (due to above if-check)
+//               interval++;
+
+//           const double lower = m_colorMapPercentiles[interval];
+//           const double upper = m_colorMapPercentiles[interval + 1];
+//           const double intervalWidth = upper - lower;
+//           const double lambda = (relativeValue - lower)/intervalWidth;    //(1 - lambda) * lower + (lambda * upper) = relativeValue
+
+//           const QVector3D col0(m_colorMapColors[interval].red(), m_colorMapColors[interval].green(), m_colorMapColors[interval].blue());
+//           const QVector3D col1(m_colorMapColors[interval + 1].red(), m_colorMapColors[interval + 1].green(), m_colorMapColors[interval + 1].blue());
+//           const QVector3D col = (1 - lambda) * col0 + lambda * col1;
+
+//           colorMap[i] = QColor(floor(col.x() + 0.5), floor(col.y() + 0.5), floor(col.z() + 0.5));
+//       }
 //   }
 
-   //min/max is not thread safe -> own for loop
-   double min = realvector[0];
-   double max = realvector[0];
-   for (int i = 1; i < numSamplePoints; i++) {
-       const double value = realvector[i];
-       if (value < min)
-           min = value;
-       if (value > max)
-           max = value;
-   }
-   const double valueRange = max-min ;
+//   return colorMap;
 
-   QVector<QColor> colorMap(numSamplePoints);
+//}
+//const QVector<QColor> LaplaceSolver::generateColorMap2(int id) const{
+//   Eigen::VectorXcd eigenvector=functions[id];
+//   QVector<double> realvector(N,0);
+//   for(int i=0;i<N;i++){
+//       realvector[i]=eigenvector[i].real();
+//   }
+//   const int numSamplePoints = N;
 
-   for (int i = 0; i < numSamplePoints; i++) {
-       double relativeValue = (realvector[i] - min) / valueRange;
+//  // QVector<double> metricValues(numSamplePoints);
 
 
+////   for (int i = 0; i < numSamplePoints; i++) {
+////       const int surfId = triangulation->getSurfaceIdOfVertex(i);
+////       const QVector2D param = triangulation->getParameterValueForVertex(i);
+////       metricValues[i] = metric->evaluatePoint(bSplines.at(surfId), param.x(), param.y());
+////   }
+
+//   //min/max is not thread safe -> own for loop
+//   double min = realvector[0];
+//   double max = realvector[0];
+//   for (int i = 1; i < numSamplePoints; i++) {
+//       const double value = realvector[i];
+//       if (value < min)
+//           min = value;
+//       if (value > max)
+//           max = value;
+//   }
+//   const double valueRange = max-min ;
+
+//   QVector<QColor> colorMap(numSamplePoints);
+
+//   for (int i = 0; i < numSamplePoints; i++) {
+//       double relativeValue = (realvector[i] - min) / valueRange;
+//           //colorMap[i] = QColor(int(relativeValue*200), int(relativeValue*200), int(relativeValue*200));
+//       //qDebug()<<relativeValue;
+//       colorMap[i] = QColor(0, 100, 123);
+//       }
 
 
-           colorMap[i] = QColor(relativeValue*255, relativeValue*255, relativeValue*255);
-       }
+//   return colorMap;
 
-
-   return colorMap;
-
-}
+//}
 
 void LaplaceSolver::writeMeshWithVertexColors(const QVector<QColor> &colormap, const QString filename)
 {
