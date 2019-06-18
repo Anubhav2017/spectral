@@ -40,9 +40,25 @@ int main(int argc, char *argv[]) {
     LaplaceSolver ls=LaplaceSolver(m);
     qDebug()<<"ls initiated";
     ls.decompose();
+//    ls.writeVectors();
     qDebug() << "Mesh decomposition done";
-    //QVector<QColor> colorMap=ls.generateColorMap2(10);
-    //ls.writeMeshWithVertexColors(colorMap,"functionten");
+
+    Eigen::VectorXcd v=ls.getEigenFunction(0);
+    for(int i=1;i<80;i++){
+        v+=ls.getEigenFunction(i);
+    }
+    int N=m->getNumberOfVertices();
+    QVector<complex<double > > vdash(N,0);
+    for(int i=0;i<N;i++){
+        vdash[i]=v(i);
+    }
+    ls.writeVector(v,"vector0-79");
+    QVector<QColor> colorMap=ls.generateColorMap2(vdash);
+    qDebug()<< "Color map generated";
+    ls.writeMeshWithVertexColors(colorMap,"combination0-79.ply");
+    ls.writeMeshWithVector(v,"morsefile079");
+
+    qDebug()<< "color Mesh generated";
 
     //Compute the quadmesh
     //Note that each cell has to be disk like (i.e. one connected border, no holes)

@@ -1073,6 +1073,11 @@ main.o: ../spectral/main.cpp ../spectral/laplacesolver.h \
 		../external/Spectra/LinAlg/UpperHessenbergEigen.h \
 		../external/Spectra/LinAlg/Arnoldi.h \
 		../external/Spectra/MatOp/DenseGenMatProd.h \
+		../external/Spectra/SymEigsSolver.h \
+		../external/Spectra/SymEigsBase.h \
+		../external/Spectra/LinAlg/TridiagEigen.h \
+		../external/Spectra/LinAlg/Lanczos.h \
+		../external/Spectra/MatOp/DenseSymMatProd.h \
 		../external/Spectra/MatOp/SparseGenMatProd.h \
 		../spectral/mainwindow.h \
 		../spectral/controller.h \
@@ -5196,6 +5201,11 @@ laplacesolver.o: ../spectral/laplacesolver.cpp ../spectral/laplacesolver.h \
 		../external/Spectra/LinAlg/UpperHessenbergEigen.h \
 		../external/Spectra/LinAlg/Arnoldi.h \
 		../external/Spectra/MatOp/DenseGenMatProd.h \
+		../external/Spectra/SymEigsSolver.h \
+		../external/Spectra/SymEigsBase.h \
+		../external/Spectra/LinAlg/TridiagEigen.h \
+		../external/Spectra/LinAlg/Lanczos.h \
+		../external/Spectra/MatOp/DenseSymMatProd.h \
 		../external/Spectra/MatOp/SparseGenMatProd.h
 	$(CXX) -c $(CXXFLAGS) $(INCPATH) -o laplacesolver.o ../spectral/laplacesolver.cpp
 
