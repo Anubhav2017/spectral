@@ -40,6 +40,52 @@ double LaplaceSolver::getWeights(Edge *e, Vertex *optionalOuterTriangleVertex=0)
         }
         return result;
 }
+void LaplaceSolver::decompose2(){
+
+    //Eigen::SparseMatrix<double> L;
+    N=m_originalMesh->getNumberOfVertices();
+    Eigen::MatrixXd V(N,3);
+    for(int i=0;i<N;i++){
+        V(i,0)=double(m_originalMesh->getVertex(i)->getPosX());
+        V(i,1)=double(m_originalMesh->getVertex(i)->getPosY());
+        V(i,2)=double(m_originalMesh->getVertex(i)->getPosZ());
+    }
+
+    int f=m_originalMesh->getNumberOfFaces();
+
+    Eigen::MatrixXi F(f,3);
+    for(int i=0;i<f;i++){
+
+        Face* fi=m_originalMesh->getFace(i);
+        for(int j=0;j<3;j++){
+            F(i,j)=fi->getVertex(j)->getId();
+        }
+    }
+    igl::cotmatrix(V,F,Laplacian);
+
+    int nev=80;
+    int ncv=200;
+
+    SparseGenMatProd<double> op(Laplacian);
+    //GenEigsSolver< double, LARGEST_MAGN, SparseGenMatProd<double> > eigs(&op,nev,ncv);
+    SymEigsSolver< double, LARGEST_MAGN, SparseGenMatProd<double> > eigs(&op,nev,ncv);
+
+    eigs.init();
+    int nconv=eigs.compute();
+
+    eigenvalues = eigs.eigenvalues();
+
+    qDebug()<< eigenvalues.rows()<< " " << eigenvalues.cols();
+    qDebug()<<"Hi4";
+    qDebug()<<eigs.eigenvectors().rows()<<"x"<<eigs.eigenvectors().cols();
+
+        //eigs.eigenvectors(i).resize(N,1);
+    functions=eigs.eigenvectors();
+
+
+
+}
+
 LaplaceSolver::LaplaceSolver(Mesh* m):tripletList(0){
     m_originalMesh=m;
     N=m->getNumberOfVertices();
@@ -321,7 +367,7 @@ const QVector<QColor> LaplaceSolver::generateColorMap2(QVector<std::complex<doub
        else relativeValue = (realvector[i] - min) / valueRange;
 
        colorMap[i] = QColor(int(relativeValue*255), int(relativeValue*255), int(relativeValue*255));
-       qDebug()<<relativeValue;
+       //qDebug()<<relativeValue;
        //colorMap[i] = QColor(0, 100, 123);
        }
 

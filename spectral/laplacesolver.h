@@ -17,6 +17,8 @@
 #include<Spectra/GenEigsSolver.h>
 #include <Spectra/SymEigsSolver.h>
 #include<Spectra/MatOp/SparseGenMatProd.h>
+#include<igl/cotmatrix.h>
+
 //typedef Matrix<double, Dynamic, Dynamic> MatrixXd;
 
 typedef Eigen::Matrix<std::complex<double>,Eigen::Dynamic,1> VectorXd;
@@ -43,6 +45,7 @@ public:
     LaplaceSolver(Mesh* m);
     double getWeights(Edge *e, Vertex *optionalOuterTriangleVertex);
     void decompose();
+    void decompose2();
     const Eigen::VectorXcd* getEigenValues() const;
     const Eigen::VectorXcd getEigenFunction(int id) const;
     const std::complex<double> getEigenValue(int id) const;

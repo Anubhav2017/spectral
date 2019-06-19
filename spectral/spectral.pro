@@ -113,6 +113,9 @@ QMAKE_LFLAGS +=  -fopenmp
 INCLUDEPATH += "../external/Eigen"
 INCLUDEPATH += "../external"
 
+
+INCLUDEPATH += "../external/igl"
+
 # GNU Scientific Library (GSL) [2017_02_05]
 # -> Linux (v.2.3): https://www.gnu.org/software/gsl/
 # -> Windows (v.1.8): http://gnuwin32.sourceforge.net/packages/gsl.htm

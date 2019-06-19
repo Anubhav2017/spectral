@@ -15,7 +15,7 @@ CXX           = g++
 DEFINES       = -DQT_QML_DEBUG -DQT_WIDGETS_LIB -DQT_GUI_LIB -DQT_CORE_LIB
 CFLAGS        = -pipe -g -Wall -W -D_REENTRANT -fPIC $(DEFINES)
 CXXFLAGS      = -pipe -fopenmp -g -std=gnu++11 -Wall -W -D_REENTRANT -fPIC $(DEFINES)
-INCPATH       = -I../spectral -I. -I../external/Eigen -I../external -I../external/gsl/include -I../external/nlopt-2.4.2/include -I../../CGAL-4.13.1/build/include -I../../CGAL-4.13.1/include -isystem /usr/include/qt5 -isystem /usr/include/qt5/QtWidgets -isystem /usr/include/qt5/QtGui -isystem /usr/include/qt5/QtCore -I. -isystem /usr/include/libdrm -I. -I/usr/lib64/qt5/mkspecs/linux-g++
+INCPATH       = -I../spectral -I. -I../external/Eigen -I../external -I../external/igl -I../external/gsl/include -I../external/nlopt-2.4.2/include -I../../CGAL-4.13.1/build/include -I../../CGAL-4.13.1/include -isystem /usr/include/qt5 -isystem /usr/include/qt5/QtWidgets -isystem /usr/include/qt5/QtGui -isystem /usr/include/qt5/QtCore -I. -isystem /usr/include/libdrm -I. -I/usr/lib64/qt5/mkspecs/linux-g++
 QMAKE         = /usr/bin/qmake-qt5
 DEL_FILE      = rm -f
 CHK_DIR_EXISTS= test -d
@@ -760,7 +760,7 @@ compiler_moc_header_clean:
 moc_mainwindow.cpp: ../spectral/mainwindow.h \
 		moc_predefs.h \
 		/usr/lib64/qt5/bin/moc
-	/usr/lib64/qt5/bin/moc $(DEFINES) --include ./moc_predefs.h -I/usr/lib64/qt5/mkspecs/linux-g++ -I/u/a/agarwala/Desktop/spectral/spectral -I/u/a/agarwala/Desktop/spectral/external/Eigen -I/u/a/agarwala/Desktop/spectral/external -I/u/a/agarwala/Desktop/spectral/external/gsl/include -I/u/a/agarwala/Desktop/spectral/external/nlopt-2.4.2/include -I/u/a/agarwala/Desktop/CGAL-4.13.1/build/include -I/u/a/agarwala/Desktop/CGAL-4.13.1/include -I/usr/include/qt5 -I/usr/include/qt5/QtWidgets -I/usr/include/qt5/QtGui -I/usr/include/qt5/QtCore -I. -I/usr/include/c++/4.8.5 -I/usr/include/c++/4.8.5/x86_64-redhat-linux -I/usr/include/c++/4.8.5/backward -I/usr/lib/gcc/x86_64-redhat-linux/4.8.5/include -I/usr/local/include -I/usr/include ../spectral/mainwindow.h -o moc_mainwindow.cpp
+	/usr/lib64/qt5/bin/moc $(DEFINES) --include ./moc_predefs.h -I/usr/lib64/qt5/mkspecs/linux-g++ -I/u/a/agarwala/Desktop/spectral/spectral -I/u/a/agarwala/Desktop/spectral/external/Eigen -I/u/a/agarwala/Desktop/spectral/external -I/u/a/agarwala/Desktop/spectral/external/igl -I/u/a/agarwala/Desktop/spectral/external/gsl/include -I/u/a/agarwala/Desktop/spectral/external/nlopt-2.4.2/include -I/u/a/agarwala/Desktop/CGAL-4.13.1/build/include -I/u/a/agarwala/Desktop/CGAL-4.13.1/include -I/usr/include/qt5 -I/usr/include/qt5/QtWidgets -I/usr/include/qt5/QtGui -I/usr/include/qt5/QtCore -I. -I/usr/include/c++/4.8.5 -I/usr/include/c++/4.8.5/x86_64-redhat-linux -I/usr/include/c++/4.8.5/backward -I/usr/lib/gcc/x86_64-redhat-linux/4.8.5/include -I/usr/local/include -I/usr/include ../spectral/mainwindow.h -o moc_mainwindow.cpp
 
 compiler_moc_source_make_all:
 compiler_moc_source_clean:
@@ -1079,6 +1079,36 @@ main.o: ../spectral/main.cpp ../spectral/laplacesolver.h \
 		../external/Spectra/LinAlg/Lanczos.h \
 		../external/Spectra/MatOp/DenseSymMatProd.h \
 		../external/Spectra/MatOp/SparseGenMatProd.h \
+		../external/igl/cotmatrix.h \
+		../external/igl/igl_inline.h \
+		../external/igl/cotmatrix.cpp \
+		../external/igl/cotmatrix_entries.h \
+		../external/igl/cotmatrix_entries.cpp \
+		../external/igl/doublearea.h \
+		../external/igl/doublearea.cpp \
+		../external/igl/edge_lengths.h \
+		../external/igl/edge_lengths.cpp \
+		../external/igl/squared_edge_lengths.h \
+		../external/igl/squared_edge_lengths.cpp \
+		../external/igl/parallel_for.h \
+		../external/igl/sort.h \
+		../external/igl/sort.cpp \
+		../external/igl/SortableRow.h \
+		../external/igl/reorder.h \
+		../external/igl/reorder.cpp \
+		../external/igl/IndexComparison.h \
+		../external/igl/colon.h \
+		../external/igl/colon.cpp \
+		../external/igl/LinSpaced.h \
+		../external/igl/face_areas.h \
+		../external/igl/face_areas.cpp \
+		../external/igl/volume.h \
+		../external/igl/volume.cpp \
+		../external/igl/cross.h \
+		../external/igl/cross.cpp \
+		../external/igl/dihedral_angles.h \
+		../external/igl/dihedral_angles.cpp \
+		../external/igl/verbose.h \
 		../spectral/mainwindow.h \
 		../spectral/controller.h \
 		../spectral/CellMesh/cellmesh.h \
@@ -5206,7 +5236,37 @@ laplacesolver.o: ../spectral/laplacesolver.cpp ../spectral/laplacesolver.h \
 		../external/Spectra/LinAlg/TridiagEigen.h \
 		../external/Spectra/LinAlg/Lanczos.h \
 		../external/Spectra/MatOp/DenseSymMatProd.h \
-		../external/Spectra/MatOp/SparseGenMatProd.h
+		../external/Spectra/MatOp/SparseGenMatProd.h \
+		../external/igl/cotmatrix.h \
+		../external/igl/igl_inline.h \
+		../external/igl/cotmatrix.cpp \
+		../external/igl/cotmatrix_entries.h \
+		../external/igl/cotmatrix_entries.cpp \
+		../external/igl/doublearea.h \
+		../external/igl/doublearea.cpp \
+		../external/igl/edge_lengths.h \
+		../external/igl/edge_lengths.cpp \
+		../external/igl/squared_edge_lengths.h \
+		../external/igl/squared_edge_lengths.cpp \
+		../external/igl/parallel_for.h \
+		../external/igl/sort.h \
+		../external/igl/sort.cpp \
+		../external/igl/SortableRow.h \
+		../external/igl/reorder.h \
+		../external/igl/reorder.cpp \
+		../external/igl/IndexComparison.h \
+		../external/igl/colon.h \
+		../external/igl/colon.cpp \
+		../external/igl/LinSpaced.h \
+		../external/igl/face_areas.h \
+		../external/igl/face_areas.cpp \
+		../external/igl/volume.h \
+		../external/igl/volume.cpp \
+		../external/igl/cross.h \
+		../external/igl/cross.cpp \
+		../external/igl/dihedral_angles.h \
+		../external/igl/dihedral_angles.cpp \
+		../external/igl/verbose.h
 	$(CXX) -c $(CXXFLAGS) $(INCPATH) -o laplacesolver.o ../spectral/laplacesolver.cpp
 
 moc_mainwindow.o: moc_mainwindow.cpp 

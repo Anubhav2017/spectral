@@ -14,6 +14,7 @@
 #include "controller.h"
 #include "stlwriter.h"
 #include <QDebug>
+
 using namespace std;
 int main(int argc, char *argv[]) {
     //cout << "Hello0";
@@ -39,24 +40,25 @@ int main(int argc, char *argv[]) {
 
     LaplaceSolver ls=LaplaceSolver(m);
     qDebug()<<"ls initiated";
-    ls.decompose();
+    ls.decompose2();
 //    ls.writeVectors();
     qDebug() << "Mesh decomposition done";
 
-    Eigen::VectorXcd v=ls.getEigenFunction(0);
-    for(int i=1;i<80;i++){
-        v+=ls.getEigenFunction(i);
-    }
+    Eigen::VectorXcd v=ls.getEigenFunction(9);
+////    for(int i=1;i<80;i++){
+////        v+=ls.getEigenFunction(i);
+////    }
     int N=m->getNumberOfVertices();
     QVector<complex<double > > vdash(N,0);
     for(int i=0;i<N;i++){
         vdash[i]=v(i);
     }
-    ls.writeVector(v,"vector0-79");
+     ls.writeVector(v,"vector9");
+     std::cout<< v<< endl;
     QVector<QColor> colorMap=ls.generateColorMap2(vdash);
     qDebug()<< "Color map generated";
-    ls.writeMeshWithVertexColors(colorMap,"combination0-79.ply");
-    ls.writeMeshWithVector(v,"morsefile079");
+    ls.writeMeshWithVertexColors(colorMap,"vector9.ply");
+   ls.writeMeshWithVector(v,"morsefile9");
 
     qDebug()<< "color Mesh generated";
 
