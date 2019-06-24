@@ -57,6 +57,7 @@ void LaplaceSolver::decompose2(){
     for(int i=0;i<f;i++){
 
         Face* fi=m_originalMesh->getFace(i);
+        //qDebug() << fi->getNumberOfVertices();
         for(int j=0;j<3;j++){
             F(i,j)=fi->getVertex(j)->getId();
         }
@@ -68,7 +69,7 @@ void LaplaceSolver::decompose2(){
 
     SparseGenMatProd<double> op(Laplacian);
     //GenEigsSolver< double, LARGEST_MAGN, SparseGenMatProd<double> > eigs(&op,nev,ncv);
-    SymEigsSolver< double, LARGEST_MAGN, SparseGenMatProd<double> > eigs(&op,nev,ncv);
+    SymEigsSolver< double, SMALLEST_MAGN, SparseGenMatProd<double> > eigs(&op,nev,ncv);
 
     eigs.init();
     int nconv=eigs.compute();
@@ -289,15 +290,15 @@ const QVector<QColor> LaplaceSolver::generateColorMap2(int id) const{
    //min/max is not thread safe -> own for loop
    double min = realvector[0];
    double max = realvector[0];
-//   for (int i = 1; i < numSamplePoints; i++) {
-//       const double value = realvector[i];
-//       if (value < min)
-//           min = value;
-//       if (value > max)
-//           max = value;
-//   }
-   min=-0.039;
-   max=0.028;
+   for (int i = 1; i < numSamplePoints; i++) {
+       const double value = realvector[i];
+       if (value < min)
+           min = value;
+       if (value > max)
+           max = value;
+   }
+//   min=-0.039;
+//   max=0.028;
 
    const double valueRange = max-min ;
 
@@ -461,6 +462,7 @@ const void LaplaceSolver::writeMeshWithVector(const Eigen::VectorXcd vec, const 
 //}
 
 void LaplaceSolver::writeVectors(){
+
     for(int i=0;i<80;i++){
         QString filename="file"+QString::number(i);
         QFile file(filename);
