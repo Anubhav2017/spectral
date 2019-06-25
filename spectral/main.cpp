@@ -14,130 +14,63 @@
 #include "controller.h"
 #include "stlwriter.h"
 #include <QDebug>
-#include"fstream"
+
+#include"spectralsolver.cpp"
 
 using namespace std;
+
 int main(int argc, char *argv[]) {
-    //cout << "Hello0";
+
 
     //QApplication a(argc, argv); //Needed for input widgets (like textbox)
     qDebug()<<"Hi";
-    //cout << "Hello0"<<std::endl;
+
 
     //get filename for the input stl
 //    QString filename = QFileDialog::getOpenFileName(0, QString("Load triangulation"), QString("../.."), "*.stl");
 //    if (filename.isEmpty())
 //        return -1;
 
-    QString filename="/u/a/agarwala/Desktop/AdaptiveSurfaceReconstruction/project_files/stl_files/sphere-d050-sf1-ml.stl";
+    //QString filename="/u/a/agarwala/Desktop/AdaptiveSurfaceReconstruction/project_files/stl_files/sphere-d050-sf1-ml_smoothed.stl";
+
+    QString filename="/u/a/agarwala/Desktop/sphere-d050-sf1-ml_smoothed_downsampled.stl";
 
     //load stl file
     qDebug()<<"stl loaded";
     Mesh *m = Mesh::loadFromBinaryStl(filename);
     qDebug()<<"Mesh loaded";
+    int ef=10;
 
     const int numberOfMeshFaces = m->getNumberOfFaces();
     qDebug() << "mesh loaded. Number of mesh faces" << m->getNumberOfFaces();
 
-//    LaplaceSolver ls=LaplaceSolver(m);
-//    qDebug()<<"ls initiated";
-//    ls.decompose2();
-////    ls.writeVectors();
-//    qDebug() << "Mesh decomposition done";
+    QVector<double> v= computeSpectralEigenvector(m,ef);
 
-//    Eigen::VectorXcd v=ls.getEigenFunction(1);
+    //ls.writeMeshWithVector(v,QString("morsefileTangle%1+_s").arg(ef));
+    saveEigenvectorToTxt(m,v,QString("morsefiledownsample%1+_s").arg(ef));
 
 
 
-////    for(int i=1;i<80;i++){
-////        v+=ls.getEigenFunction(i);
-////    }
-    int N=m->getNumberOfVertices();
-
-//    QVector<complex<double > > vdash(N,0);
-
-//    for(int i=0;i<N;i++){
-//        vdash[i]=v(i);
-//    }
-
-//     ls.writeVector(v,"vector1_s");
-
-//     std::cout<< v<< endl;
-//     //ls.writeVectors();
 
 //    QVector<QColor> colorMap=ls.generateColorMap2(vdash);
 //    qDebug()<< "Color map generated";
-//    ls.writeMeshWithVertexColors(colorMap,"vector1s.ply");
-//   ls.writeMeshWithVector(v,"morsefile1_s");
 
+//    ls.writeMeshWithVertexColors(colorMap,QString("Tanglevector%1s.ply").arg(ef));
 //    qDebug()<< "color Mesh generated";
 
-    //Compute the quadmesh
-    //Note that each cell has to be disk like (i.e. one connected border, no holes)
-    QVector<int> faceCellMap(numberOfMeshFaces);    //faceCellMap[i] = cell that face i is assigned to
-
-    ifstream readmap;
-    readmap.open("/u/a/agarwala/Desktop/spectral/quadmap.txt");
-    QVector<int> vertexmap(N,0);
-    int min,max=2;
-
-    for(int i=0;i<N;i++){
-        readmap >> vertexmap[i];
-        if(vertexmap[i] < min)min=vertexmap[i];
-        if(vertexmap[i] > max)max=vertexmap[i];
-    }
-    qDebug()<< "min=" << min;
-    qDebug() << "max=" << max;
-    qDebug() << "Quadmesh code starts here";
-    //qDebug() << vertexmap;
-    for(int i=0; i<numberOfMeshFaces ;i++){
-        int x0 = vertexmap[m->getFace(i)->getVertex(0)->getId()];
-        int x1 = vertexmap[m->getFace(i)->getVertex(1)->getId()];
-        int x2 = vertexmap[m->getFace(i)->getVertex(2)->getId()];
-
-        if(x0==x1 || x0==x2){
-            faceCellMap[i]=x0;
-        }
-        else if(x1==x0 || x1==x2){
-            faceCellMap[i]=x1;
-        }
-        else faceCellMap[i]=x0;
-
-    }
+    QVector<int> vertexmap = loadMorseSmaleDecomposition("/u/a/agarwala/Desktop/spectral/quadmap10.txt");
+ //   CellMesh* cm=ls.generateCellMesh("/u/a/agarwala/Desktop/spectral/quadmap10.txt");
+    CellMesh* cm=createCellMeshFromMorseSmale(m,vertexmap);
 
 
-
-    double r;
-    QVector3D center;
-    m->calculateMinimumBoundingSphere(r, center);
-
-//    for (int i = 0; i < numberOfMeshFaces; i++) {
-//        Face *f = m->getFace(i);
-//        if (f->getCenter().x() < center.x() && f->getCenter().y() < center.y())
-//            faceCellMap[i] = 0;
-//        else if (f->getCenter().x() < center.x() && f->getCenter().y() >= center.y())
-//            faceCellMap[i] = 1;
-//        else if (f->getCenter().x() >= center.x() && f->getCenter().y() < center.y())
-//            faceCellMap[i] = 2;
-//        else
-//            faceCellMap[i] = 3;
-//    }
-
-    int numberOfCells = max-min+1;  //this needs to be set to the actual number of cells
-
-
-    /** Quadmesh code ends here **/
-
-    //Generate cellmesh
-    CellMesh *cm = new CellMesh(m, faceCellMap, numberOfCells);
 
     //test face and vertex valencies
     qDebug() << "Vertex Valencies" << cm->getValencyHistogramCellVertices() << "total:" << cm->getNumberOfVertices();
-    qDebug() << "Face Valencies" << cm->getValencyHistogramCellFaces() << "total:" << cm->getNumberOfFaces();
+         qDebug() << "Face Valencies" << cm->getValencyHistogramCellFaces() << "total:" << cm->getNumberOfFaces();
 
     //Output of cellmesh into .stl
     QString outputFolder("../");
-    QString basename("cellmesh");
+    QString basename("cellmesh_5");
     double stlLineWidth = 0.15;
 
     StlWriter writer(outputFolder, false);

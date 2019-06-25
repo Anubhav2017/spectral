@@ -4,6 +4,10 @@
 #include<Mesh/edge.h>
 #include<Mesh/mesh.h>
 #include<Mesh/face.h>
+#include<CellMesh/cellmesh.h>
+#include<CellMesh/cellvertex.h>
+#include<CellMesh/celledge.h>
+#include<CellMesh/cellface.h>
 #include<Eigen/Core>
 #include<Eigen/Dense>
 #include<Eigen/SparseCore>
@@ -18,7 +22,7 @@
 #include <Spectra/SymEigsSolver.h>
 #include<Spectra/MatOp/SparseGenMatProd.h>
 #include<igl/cotmatrix.h>
-
+#include<fstream>
 //typedef Matrix<double, Dynamic, Dynamic> MatrixXd;
 
 typedef Eigen::Matrix<std::complex<double>,Eigen::Dynamic,1> VectorXd;
@@ -54,9 +58,13 @@ public:
 
     void writeMeshWithVertexColors(const QVector<QColor> &colormap, const QString filename);
     void writeVectors();
-    const QVector<QColor> generateColorMap2(QVector<std::complex<double> >eigenvector) const;
+    const QVector<QColor> generateColorMap2(QVector<double >eigenvector) const;
     const void writeVector(Eigen::VectorXcd v, QString filename)const;
     const void writeMeshWithVector(const Eigen::VectorXcd v, const QString filename) const;
+
+    CellMesh *generateCellMesh(QString filename) const;
+
+
 
 
 

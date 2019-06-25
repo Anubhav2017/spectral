@@ -55,7 +55,8 @@ SOURCES += main.cpp\
     MBSI/surfacesubdivider.cpp \
     MBSI/subsurfacetree.cpp \
     MBSI/subdivisioninspectionanglemetric.cpp \
-    laplacesolver.cpp
+    laplacesolver.cpp \
+    spectralsolver.cpp
 
 HEADERS  += mainwindow.h\
     Mesh/edge.h \
