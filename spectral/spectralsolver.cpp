@@ -1,9 +1,9 @@
-#include<laplacesolver.h>
-#include<fstream>
+#include "spectralsolver.h"
 
 using namespace std;
 
-QVector<double> computeSpectralEigenvector(Mesh *m, int numberOfEigenVector){
+
+QVector<double> spectralsolver::computeSpectralEigenvector(Mesh *m, int numberOfEigenVector){
     LaplaceSolver ls=LaplaceSolver(m);
 
     qDebug()<<"ls initiated";
@@ -26,7 +26,7 @@ QVector<double> computeSpectralEigenvector(Mesh *m, int numberOfEigenVector){
    return vdash;
 }
 
-void saveEigenvectorToTxt(Mesh *m, QVector<double> eigenvector, QString filename){
+void spectralsolver::saveEigenvectorToTxt(Mesh *m, QVector<double> eigenvector, QString filename){
 
 
     QFile file(filename);
@@ -52,7 +52,7 @@ void saveEigenvectorToTxt(Mesh *m, QVector<double> eigenvector, QString filename
 
 }
 
-QVector<int> loadMorseSmaleDecomposition(QString filename){
+QVector<int> spectralsolver::loadMorseSmaleDecomposition(QString filename){
 
 //    QVector<int> faceCellMap(numberOfMeshFaces);
 
@@ -70,7 +70,7 @@ QVector<int> loadMorseSmaleDecomposition(QString filename){
 }
 
 
-CellMesh *createCellMeshFromMorseSmale(Mesh *m, QVector<int> vertexmap){
+CellMesh* spectralsolver::createCellMeshFromMorseSmale(Mesh *m, QVector<int> vertexmap){
 
     int numberOfMeshFaces=m->getNumberOfFaces();
 
@@ -162,3 +162,55 @@ CellMesh *createCellMeshFromMorseSmale(Mesh *m, QVector<int> vertexmap){
     CellMesh *cm = new CellMesh(m, faceCellMap, numberOfCells);
     return cm;
 }
+QVector<QColor> spectralsolver::generateColorMap2(QVector<double >realvector){
+   //QVector<std::complex<double> >eigenvector=functions[id];
+
+   const int numSamplePoints = realvector.size();
+
+  // QVector<double> metricValues(numSamplePoints);
+
+
+//   for (int i = 0; i < numSamplePoints; i++) {
+//       const int surfId = triangulation->getSurfaceIdOfVertex(i);
+//       const QVector2D param = triangulation->getParameterValueForVertex(i);
+//       metricValues[i] = metric->evaluatePoint(bSplines.at(surfId), param.x(), param.y());
+//   }
+
+   //min/max is not thread safe -> own for loop
+   double min = realvector[0];
+   double max = realvector[0];
+   for (int i = 1; i < numSamplePoints; i++) {
+       const double value = realvector[i];
+       if (value < min)
+           min = value;
+       if (value > max)
+           max = value;
+   }
+//   min=-0.039;
+//   max=0.028;
+
+   const double valueRange = max-min ;
+
+   QVector<QColor> colorMap(numSamplePoints);
+
+   for (int i = 0; i < numSamplePoints; i++) {
+       double relativeValue = 0;
+       if(realvector[i]<min){
+           relativeValue=0;
+       }
+       else if (realvector[i]>max){
+           relativeValue=1;
+       }
+       else relativeValue = (realvector[i] - min) / valueRange;
+
+       colorMap[i] = QColor(int(relativeValue*255), int(relativeValue*255), int(relativeValue*255));
+       //qDebug()<<relativeValue;
+       //colorMap[i] = QColor(0, 100, 123);
+       }
+
+
+   return colorMap;
+
+}
+
+

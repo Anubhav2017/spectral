@@ -56,7 +56,9 @@ SOURCES += main.cpp\
     MBSI/subsurfacetree.cpp \
     MBSI/subdivisioninspectionanglemetric.cpp \
     laplacesolver.cpp \
-    spectralsolver.cpp
+    spectral1.cpp \
+    spectralsolver.cpp \
+    closestface.cpp
 
 HEADERS  += mainwindow.h\
     Mesh/edge.h \
@@ -101,7 +103,9 @@ HEADERS  += mainwindow.h\
     MBSI/subsurfacetree.h \
     MBSI/subdivisioninspectionanglemetric.h \
     quadmeshgeneration.h \
-    laplacesolver.h
+    laplacesolver.h \
+    spectralsolver.h \
+    closestface.h
 
 FORMS    += mainwindow.ui
 

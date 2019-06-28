@@ -14,12 +14,79 @@
 #include "controller.h"
 #include "stlwriter.h"
 #include <QDebug>
-
-#include"spectralsolver.cpp"
-
+#include<spectralsolver.h>
+#include<closestface.h>
 using namespace std;
 
 int main(int argc, char *argv[]) {
+
+    //QApplication a(argc, argv); //Needed for input widgets (like textbox)
+    qDebug()<<"Hi";
+
+    //get filename for the input stl
+//    QString filename = QFileDialog::getOpenFileName(0, QString("Load triangulation"), QString("../.."), "*.stl");
+//    if (filename.isEmpty())
+//        return -1;
+
+    QString filename2="/u/a/agarwala/Desktop/sphere-d050-sf1-ml_smoothed_downsampled.stl";
+    //QString filename2="/u/a/agarwala/Desktop/AdaptiveSurfaceReconstruction/project_files/stl_files/sphere-d100-sf1-ml.stl";
+    QString filename1="/u/a/agarwala/Desktop/AdaptiveSurfaceReconstruction/project_files/stl_files/Tanglecube.stl";
+
+    //QString filename="/u/a/agarwala/Desktop/sphere-d050-sf1-ml_smoothed_downsampled.stl";
+
+    //load stl file
+    qDebug()<<"stl loaded";
+    Mesh *m = Mesh::loadFromBinaryStl(filename1);
+    Mesh *mdash = Mesh::loadFromBinaryStl(filename2);
+    int numberOfDataPoints=mdash->getNumberOfVertices();
+    //int N=m->getNumberOfVertices();
+
+    qDebug()<<"Meshes loaded";
+
+
+    Eigen::MatrixXd vertices(numberOfDataPoints,3);
+
+    for(int i=0;i<numberOfDataPoints;i++){
+        vertices(i,0)=mdash->getVertex(i)->getPosX();
+        vertices(i,1)=mdash->getVertex(i)->getPosY();
+        vertices(i,2)=mdash->getVertex(i)->getPosZ();
+    }
+    qDebug() << "vertices created";
+
+    //QVector<QVector<double> > pointmap=closestface::computeBarycentreCoordinates(m,vertices);
+//    QVector<int> pointmap=closestface::loadFaceMap(m,vertices);
+//    qDebug() << pointmap;
+    QVector<QVector3D> projections= closestface::loadProjections(m,vertices);
+
+
+
+  StlWriter debugWriter("../out/", false, false, false);
+
+
+  QVector<Edge*> lines;
+
+  //create lines between the point and its projection
+  for (int i = 0; i < numberOfDataPoints; i++) {
+  Vertex *pointCloudPoint = mdash->getVertex(i);
+  Vertex *projection = new Vertex(projections[i],-1); //YYY is of type QVector3D
+  lines << new Edge(pointCloudPoint , projection , -1);
+  }
+
+  debugWriter.writeEdgesToStl(&lines,"projectionVisualization.stl" );
+
+  //clean up
+  for (int i = 0; i < numberOfDataPoints; i++) {
+  delete lines[i]->getVertex(0);
+  delete lines[i]->getVertex(1);
+  delete lines[i];
+  }
+
+
+    return 0;
+}
+
+
+int main3(int argc, char *argv[]) {
 
 
     //QApplication a(argc, argv); //Needed for input widgets (like textbox)
@@ -32,8 +99,10 @@ int main(int argc, char *argv[]) {
 //        return -1;
 
     //QString filename="/u/a/agarwala/Desktop/AdaptiveSurfaceReconstruction/project_files/stl_files/sphere-d050-sf1-ml_smoothed.stl";
-
+    //QString filename="/u/a/agarwala/Desktop/AdaptiveSurfaceReconstruction/project_files/stl_files/Tanglecube.stl";
     QString filename="/u/a/agarwala/Desktop/sphere-d050-sf1-ml_smoothed_downsampled.stl";
+    //QString filename="/u/a/agarwala/Desktop/sphere-d050-sf1-ml_smoothed_downsampled.stl";
+
 
     //load stl file
     qDebug()<<"stl loaded";
@@ -44,29 +113,29 @@ int main(int argc, char *argv[]) {
     const int numberOfMeshFaces = m->getNumberOfFaces();
     qDebug() << "mesh loaded. Number of mesh faces" << m->getNumberOfFaces();
 
-    QVector<double> v= computeSpectralEigenvector(m,ef);
+    QVector<double> v= spectralsolver::computeSpectralEigenvector(m,ef);
 
     //ls.writeMeshWithVector(v,QString("morsefileTangle%1+_s").arg(ef));
-    saveEigenvectorToTxt(m,v,QString("morsefiledownsample%1+_s").arg(ef));
+    spectralsolver::saveEigenvectorToTxt(m,v,QString("morsefileTangle%1_s").arg(ef));
 
 
 
+    QVector<QColor> colorMap=spectralsolver::generateColorMap2(v);
 
-//    QVector<QColor> colorMap=ls.generateColorMap2(vdash);
-//    qDebug()<< "Color map generated";
+    qDebug()<< "Color map generated";
 
 //    ls.writeMeshWithVertexColors(colorMap,QString("Tanglevector%1s.ply").arg(ef));
 //    qDebug()<< "color Mesh generated";
 
-    QVector<int> vertexmap = loadMorseSmaleDecomposition("/u/a/agarwala/Desktop/spectral/quadmap10.txt");
- //   CellMesh* cm=ls.generateCellMesh("/u/a/agarwala/Desktop/spectral/quadmap10.txt");
-    CellMesh* cm=createCellMeshFromMorseSmale(m,vertexmap);
+    QVector<int> vertexmap = spectralsolver::loadMorseSmaleDecomposition("/u/a/agarwala/Desktop/spectral/quadmap10.txt");
+//  CellMesh* cm=ls.generateCellMesh("/u/a/agarwala/Desktop/spectral/quadmap10.txt");
+    CellMesh* cm=spectralsolver::createCellMeshFromMorseSmale(m,vertexmap);
 
 
 
     //test face and vertex valencies
     qDebug() << "Vertex Valencies" << cm->getValencyHistogramCellVertices() << "total:" << cm->getNumberOfVertices();
-         qDebug() << "Face Valencies" << cm->getValencyHistogramCellFaces() << "total:" << cm->getNumberOfFaces();
+    qDebug() << "Face Valencies" << cm->getValencyHistogramCellFaces() << "total:" << cm->getNumberOfFaces();
 
     //Output of cellmesh into .stl
     QString outputFolder("../");
