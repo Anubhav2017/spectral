@@ -10,7 +10,10 @@
 #include <QVector3D>
 #include <QPair>
 #include <QString>
-
+#include <Eigen>
+#include <igl/pathinfo.h>
+#include <QDebug>
+#include <igl/readOBJ.h>
 class Mesh
 {
 public:
@@ -47,6 +50,7 @@ public:
     void saveToFile(QString filename, QString optionalHeader = QString());
     static Mesh *loadFromFile(QString filename);
     static Mesh *loadFromBinaryStl(QString filename);
+    static Mesh* loadFromObj(QString filename);
 
 private:
     QHash<QVector3D, Vertex *> m_coordinateVertexMap;

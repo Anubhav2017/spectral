@@ -9,7 +9,9 @@
 #include <iostream>
 #include <fstream>
 #include <cmath>
-
+using namespace igl;
+  using namespace Eigen;
+using namespace std;
 uint qHash(const QVector3D &v)
 {
     return qHash( QString( "%1x%2x%3" ).arg(v.x()).arg(v.y()).arg(v.z()) ) ;
@@ -524,4 +526,55 @@ Mesh *Mesh::loadFromBinaryStl(QString filename)
     file.close();
 
     return m;
+}
+
+Mesh* Mesh::loadFromObj(QString qfilename){
+
+      string filename=qfilename.toStdString();
+      Eigen::MatrixXd V;
+      Eigen::MatrixXi F;
+      //QString dirname, basename, extension, filename;
+      //Eigen::pathinfo(mesh_filename,dirname,basename,extension,filename);
+      bool success = readOBJ(filename,V,F);
+      int Nvertices=V.rows();
+      int NFaces=F.rows();
+//      qDebug()<<"VShape= "<<V.rows()<<"X"<<V.cols();
+//      qDebug()<<"Fshape="<<F.rows()<<"X "<<F.cols();
+
+      Mesh* m=new Mesh();
+      m->addInfo(qfilename+'\n');
+      for(int i=0;i<NFaces;i++){
+          int fshape=F.cols();
+          QVector<QVector3D> corners(fshape);
+          for(int j=0;j<fshape;j++){
+              corners[j]=QVector3D(double(V(F(i,j),0)),double(V(F(i,j),1)),double(V(F(i,j),2)));
+          }
+          QVector3D normal;
+
+          normal=QVector3D::normal(corners[0],corners[1],corners[2]);
+
+          if(fshape>3){
+              //normal=QVector3D::normal(corners[0],corners[1],corners[2]);
+              for(int j=3;j<fshape;j++){
+                  QVector3D vec=corners[j]-corners[0];
+                  if(QVector3D::dotProduct(vec,normal) != 0){
+                      qDebug() << QVector3D::dotProduct(vec,normal);
+                      normal=QVector3D(0,0,0);
+                      break;
+                  }
+              }
+          }
+
+//          if(fshape==4){
+//              QVector3D diag1=corners[0]-corners[2];
+//              QVector3D diag2=corners[1]-corners[3];
+//              normal=QVector3D::crossProduct(diag1,diag2);
+//              normal.normalize();
+//          }
+
+          m->addFace(corners,normal);
+      }
+
+      return m;
+
 }

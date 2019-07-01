@@ -18,6 +18,16 @@
 #include<closestface.h>
 using namespace std;
 
+
+int main2(int argc, char *argv[]){
+    QString filename="/u/a/agarwala/Desktop/asTorus.obj";
+    Mesh* m=Mesh::loadFromObj(filename);
+    qDebug()<<m->getNumberOfVertices();
+    qDebug()<<m->getNumberOfFaces();
+}
+
+
+
 int main(int argc, char *argv[]) {
 
     //QApplication a(argc, argv); //Needed for input widgets (like textbox)
@@ -30,32 +40,32 @@ int main(int argc, char *argv[]) {
 
     QString filename2="/u/a/agarwala/Desktop/sphere-d050-sf1-ml_smoothed_downsampled.stl";
     //QString filename2="/u/a/agarwala/Desktop/AdaptiveSurfaceReconstruction/project_files/stl_files/sphere-d100-sf1-ml.stl";
-    QString filename1="/u/a/agarwala/Desktop/AdaptiveSurfaceReconstruction/project_files/stl_files/Tanglecube.stl";
+    QString filename1="/u/a/agarwala/Desktop/AdaptiveSurfaceReconstruction/project_files/stl_files/sphere-d050-sf1-ml.stl";
 
     //QString filename="/u/a/agarwala/Desktop/sphere-d050-sf1-ml_smoothed_downsampled.stl";
 
     //load stl file
     qDebug()<<"stl loaded";
-    Mesh *m = Mesh::loadFromBinaryStl(filename1);
-    Mesh *mdash = Mesh::loadFromBinaryStl(filename2);
+    Mesh *m = Mesh::loadFromBinaryStl(filename2);
+    Mesh *mdash = Mesh::loadFromBinaryStl(filename1);
     int numberOfDataPoints=mdash->getNumberOfVertices();
     //int N=m->getNumberOfVertices();
 
     qDebug()<<"Meshes loaded";
 
 
-    Eigen::MatrixXd vertices(numberOfDataPoints,3);
+    QVector<QVector3D> vertices(numberOfDataPoints);
 
     for(int i=0;i<numberOfDataPoints;i++){
-        vertices(i,0)=mdash->getVertex(i)->getPosX();
-        vertices(i,1)=mdash->getVertex(i)->getPosY();
-        vertices(i,2)=mdash->getVertex(i)->getPosZ();
+        vertices[i][0]=mdash->getVertex(i)->getPosX();
+        vertices[i][1]=mdash->getVertex(i)->getPosY();
+        vertices[i][2]=mdash->getVertex(i)->getPosZ();
     }
     qDebug() << "vertices created";
 
-    //QVector<QVector<double> > pointmap=closestface::computeBarycentreCoordinates(m,vertices);
-//    QVector<int> pointmap=closestface::loadFaceMap(m,vertices);
-//    qDebug() << pointmap;
+//    QVector<QVector<double> > pointmap=closestface::computeBarycentreCoordinates(m,vertices);
+    QVector<int> pointmap=closestface::loadFaceMap(m,vertices);
+    qDebug() << pointmap;
     QVector<QVector3D> projections= closestface::loadProjections(m,vertices);
 
 

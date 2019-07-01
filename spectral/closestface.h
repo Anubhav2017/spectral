@@ -10,9 +10,9 @@ class closestface
 {
 public:
 
-    static QVector<int> loadFaceMap(Mesh* m1, Eigen::MatrixXd points);
-    static QVector<QVector<double> > computeBarycentreCoordinates(Mesh* m, Eigen::MatrixXd points);
-    static QVector<QVector3D> loadProjections(Mesh *m, Eigen::MatrixXd points);
+    static QVector<int> loadFaceMap(Mesh* m1, QVector<QVector3D> pointsvector);
+    static QVector<QVector<double> > computeBarycentreCoordinates(Mesh* m, QVector<QVector3D> pointsvector);
+    static QVector<QVector3D> loadProjections(Mesh *m, QVector<QVector3D> pointsvector);
 };
 
 #endif // CLOSESTFACE_H

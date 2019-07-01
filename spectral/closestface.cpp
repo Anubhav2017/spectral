@@ -1,7 +1,22 @@
 #include "closestface.h"
 
 
-QVector<int> closestface::loadFaceMap(Mesh *m, Eigen::MatrixXd points){
+QVector<int> closestface::loadFaceMap(Mesh *m, QVector<QVector3D> pointsvector){
+
+    int r=pointsvector.size();
+    int c=3;
+
+    Eigen::MatrixXd points(r,c);
+
+
+    for(int i=0;i<r;i++){
+//        for(int j=0;j<c;j++){
+//            points(i,j)=pointsvector[i][j];
+//        }
+        points(i,0)=double(pointsvector[i].x());
+        points(i,1)=double(pointsvector[i].y());
+        points(i,2)=double(pointsvector[i].z());
+    }
 
     int N=m->getNumberOfVertices();
     int Ndash=points.rows();
@@ -39,7 +54,22 @@ QVector<int> closestface::loadFaceMap(Mesh *m, Eigen::MatrixXd points){
     return indices;
 }
 
-QVector<QVector3D> closestface::loadProjections(Mesh *m, Eigen::MatrixXd points){
+QVector<QVector3D> closestface::loadProjections(Mesh *m, QVector<QVector3D> pointsvector){
+
+    int r=pointsvector.size();
+    int c=3;
+
+    Eigen::MatrixXd points(r,c);
+
+
+    for(int i=0;i<r;i++){
+//        for(int j=0;j<c;j++){
+//            points(i,j)=pointsvector[i][j];
+//        }
+        points(i,0)=double(pointsvector[i].x());
+        points(i,1)=double(pointsvector[i].y());
+        points(i,2)=double(pointsvector[i].z());
+    }
 
     int N=m->getNumberOfVertices();
     int Ndash=points.rows();
@@ -77,7 +107,21 @@ QVector<QVector3D> closestface::loadProjections(Mesh *m, Eigen::MatrixXd points)
     return projections;
 }
 
-QVector<QVector<double> > closestface::computeBarycentreCoordinates(Mesh* m, Eigen::MatrixXd points){
+QVector<QVector<double> > closestface::computeBarycentreCoordinates(Mesh* m, QVector<QVector3D> pointsvector){
+
+    int r=pointsvector.size();
+    int c=3;
+
+    Eigen::MatrixXd points(r,c);
+
+    for(int i=0;i<r;i++){
+//        for(int j=0;j<c;j++){
+//            points(i,j)=pointsvector[i][j];
+//        }
+        points(i,0)=double(pointsvector[i].x());
+        points(i,1)=double(pointsvector[i].y());
+        points(i,2)=double(pointsvector[i].z());
+    }
 
     int N=m->getNumberOfVertices();
     int Ndash=points.rows();

@@ -3,7 +3,7 @@
 using namespace std;
 
 
-QVector<double> spectralsolver::computeSpectralEigenvector(Mesh *m, int numberOfEigenVector){
+QVector<double> spectralsolver::computeSpectralEigenvector(Mesh *m, int ef){
     LaplaceSolver ls=LaplaceSolver(m);
 
     qDebug()<<"ls initiated";
@@ -11,7 +11,7 @@ QVector<double> spectralsolver::computeSpectralEigenvector(Mesh *m, int numberOf
 //    ls.writeVectors();
     qDebug() << "Mesh decomposition done";
 
-    int ef=numberOfEigenVector;
+
 
     Eigen::VectorXcd v=ls.getEigenFunction(ef);
 
