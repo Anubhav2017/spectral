@@ -42,14 +42,15 @@ double LaplaceSolver::getWeights(Edge *e, Vertex *optionalOuterTriangleVertex=0)
 }
 
 CellMesh* LaplaceSolver::generateCellMesh(QString filename) const{
+
     //Compute the quadmesh
     //Note that each cell has to be disk like (i.e. one connected border, no holes)
     //faceCellMap[i] = cell that face i is assigned to
+
     int numberOfMeshFaces=m_originalMesh->getNumberOfFaces();
     Mesh* m= m_originalMesh;
+
     QVector<int> faceCellMap(numberOfMeshFaces);
-
-
 
     ifstream readmap;
     readmap.open(filename.toStdString().c_str());
@@ -61,10 +62,9 @@ CellMesh* LaplaceSolver::generateCellMesh(QString filename) const{
         if(vertexmap[i] < min)min=vertexmap[i];
         if(vertexmap[i] > max)max=vertexmap[i];
     }
-    qDebug()<< "min=" << min;
-    qDebug() << "max=" << max;
+
     qDebug() << "Quadmesh code starts here";
-    //qDebug() << vertexmap;
+
     for(int i=0; i<numberOfMeshFaces ;i++){
             int x0 = vertexmap[m->getFace(i)->getVertex(0)->getId()];
             int x1 = vertexmap[m->getFace(i)->getVertex(1)->getId()];
@@ -77,7 +77,6 @@ CellMesh* LaplaceSolver::generateCellMesh(QString filename) const{
                 faceCellMap[i]=x1;
             }
             else faceCellMap[i]=x0;
-
         }
 
 
@@ -102,18 +101,6 @@ CellMesh* LaplaceSolver::generateCellMesh(QString filename) const{
 
     }
 
-    //qDebug()<< faceCellMap;
-
-//    QVector<QColor> colorMap=ls.generateColorMap2(faceCellMap);
-//    qDebug()<< "Color map generated";
-//    ls.writeMeshWithVertexColors(colorMap,QString("vector%1s.ply").arg(ef));
-
-
-
-//    double r;
-//    QVector3D center;
-//    m->calculateMinimumBoundingSphere(r, center);
-
 //    for (int i = 0; i < numberOfMeshFaces; i++) {
 //        Face *f = m->getFace(i);
 //        if (f->getCenter().x() < center.x() && f->getCenter().y() < center.y())
@@ -127,9 +114,6 @@ CellMesh* LaplaceSolver::generateCellMesh(QString filename) const{
 //    }
 
     int numberOfCells = max-min+1;  //this needs to be set to the actual number of cells
-    //int numberOfCells = 4;  //this needs to be set to the actual number of cells
-
-
     /** Quadmesh code ends here **/
 
     //Generate cellmesh
@@ -164,7 +148,7 @@ void LaplaceSolver::decompose2(){
     int ncv=50;
 
     SparseGenMatProd<double> op(Laplacian);
-    //GenEigsSolver< double, LARGEST_MAGN, SparseGenMatProd<double> > eigs(&op,nev,ncv);
+
     SymEigsSolver< double, SMALLEST_MAGN, SparseGenMatProd<double> > eigs(&op,nev,ncv);
 
     eigs.init();
@@ -176,14 +160,8 @@ void LaplaceSolver::decompose2(){
     qDebug()<<"Hi4";
     qDebug()<<eigs.eigenvectors().rows()<<"x"<<eigs.eigenvectors().cols();
 
-        //eigs.eigenvectors(i).resize(N,1);
     functions=eigs.eigenvectors();
-
-
-
 }
-
-
 
 LaplaceSolver::LaplaceSolver(Mesh* m):tripletList(0){
     m_originalMesh=m;
@@ -222,81 +200,12 @@ LaplaceSolver::LaplaceSolver(Mesh* m):tripletList(0){
 
 }
 
-//void LaplaceSolver::decompose(){
-
-//    //qDebug()<<"Hi0";
-//    //Eigen::EigenSolver<Eigen::SparseMatrix<double> > es;
-//    //qDebug()<<"Hi1"<<endl;
-
-//    //cout<<Laplacian<<endl;
-//    //es.compute(Laplacian);
-
-//    qDebug()<<"Hi3";
-
-//    int nev=80;
-//    int ncv=200;
-
-//    SparseGenMatProd<double> op(Laplacian);
-//    //GenEigsSolver< double, LARGEST_MAGN, SparseGenMatProd<double> > eigs(&op,nev,ncv);
-//    SymEigsSolver< double, LARGEST_MAGN, SparseGenMatProd<double> > eigs(&op,nev,ncv);
-
-//    eigs.init();
-//    int nconv=eigs.compute();
-
-//    eigenvalues = eigs.eigenvalues();
-
-//    qDebug()<< eigenvalues.rows()<< " " << eigenvalues.cols();
-//    qDebug()<<"Hi4";
-//    qDebug()<<eigs.eigenvectors().rows()<<"x"<<eigs.eigenvectors().cols();
-
-//        //eigs.eigenvectors(i).resize(N,1);
-//    functions=eigs.eigenvectors();
-////        qDebug()<<vec.rows()<<"x"<<vec.cols();
-
-
-//  //      functions.append(eigs.eigenvectors(i));
-////    int r=eigs.eigenvectors().rows();
-////    int c=eigs.eigenvectors().cols();
-////    for(int i=0;i<nev;i++){
-////        for(int j=0;j<N;j++){
-////            functions[i][j]=vec(j,i);
-////        }
-////    }
-//    qDebug()<<"Hi5";
-////    for(int j=0;j<N;j++){
-////        std::complex<double> a= vec(j,3);
-////        qDebug() << a.real() << " "<< a.imag();
-////    }
-//    //cout<<functions[0]<<endl;
-
-
-//    //cout<<functions[0]<<endl;
-////    for(int i=0;i<80;i++){
-////        functions[i]=es.eigenvectors().col(i);
-////    }
-
-////    for(int i=0;i<80;i++){
-////        std::cout<<eigenvalues[i]<<'\n';
-////    }
-////    cout<<(Laplacian*eigs.eigenvectors().col(20))-eigs.eigenvectors().col(20)*eigenvalues[20]<<endl;
-
-
-//}
 
 const Eigen::VectorXcd* LaplaceSolver::getEigenValues() const{
+
     return &eigenvalues;
 
-
 }
-
-//const Eigen::VectorXcd LaplaceSolver::getEigenFunction(int id) const{
-
-//    return functions.col(id);
-//}
-
-//const Eigen::VectorXcd* LaplaceSolver::getEigenFunction(int id) const{
-//    return &(functions[id]);
-//}
 
 const  std::complex<double> LaplaceSolver::getEigenValue(int id) const{
     return eigenvalues[id];
@@ -311,16 +220,6 @@ const QVector<QColor> LaplaceSolver::generateColorMap(int id) const{
    }
    const int numSamplePoints = N;
 
-  // QVector<double> metricValues(numSamplePoints);
-
-
-//   for (int i = 0; i < numSamplePoints; i++) {
-//       const int surfId = triangulation->getSurfaceIdOfVertex(i);
-//       const QVector2D param = triangulation->getParameterValueForVertex(i);
-//       metricValues[i] = metric->evaluatePoint(bSplines.at(surfId), param.x(), param.y());
-//   }
-
-   //min/max is not thread safe -> own for loop
    double min = realvector[0];
    double max = realvector[0];
    for (int i = 1; i < numSamplePoints; i++) {
@@ -330,10 +229,6 @@ const QVector<QColor> LaplaceSolver::generateColorMap(int id) const{
        if (value > max)
            max = value;
    }
-
-   qDebug()<< "min="<<min;
-
-    qDebug()<< "max="<<max;
 
    const double valueRange = max-min ;
 
@@ -376,16 +271,6 @@ const QVector<QColor> LaplaceSolver::generateColorMap2(int id) const{
    }
    const int numSamplePoints = N;
 
-  // QVector<double> metricValues(numSamplePoints);
-
-
-//   for (int i = 0; i < numSamplePoints; i++) {
-//       const int surfId = triangulation->getSurfaceIdOfVertex(i);
-//       const QVector2D param = triangulation->getParameterValueForVertex(i);
-//       metricValues[i] = metric->evaluatePoint(bSplines.at(surfId), param.x(), param.y());
-//   }
-
-   //min/max is not thread safe -> own for loop
    double min = realvector[0];
    double max = realvector[0];
    for (int i = 1; i < numSamplePoints; i++) {
@@ -395,8 +280,6 @@ const QVector<QColor> LaplaceSolver::generateColorMap2(int id) const{
        if (value > max)
            max = value;
    }
-//   min=-0.039;
-//   max=0.028;
 
    const double valueRange = max-min ;
 
@@ -413,8 +296,7 @@ const QVector<QColor> LaplaceSolver::generateColorMap2(int id) const{
        else relativeValue = (realvector[i] - min) / valueRange;
 
        colorMap[i] = QColor(int(relativeValue*255), int(relativeValue*255), int(relativeValue*255));
-       qDebug()<<relativeValue;
-       //colorMap[i] = QColor(0, 100, 123);
+
        }
 
 
@@ -422,18 +304,8 @@ const QVector<QColor> LaplaceSolver::generateColorMap2(int id) const{
 
 }
 const QVector<QColor> LaplaceSolver::generateColorMap2(QVector<double >realvector) const{
-   //QVector<std::complex<double> >eigenvector=functions[id];
 
    const int numSamplePoints = N;
-
-  // QVector<double> metricValues(numSamplePoints);
-
-
-//   for (int i = 0; i < numSamplePoints; i++) {
-//       const int surfId = triangulation->getSurfaceIdOfVertex(i);
-//       const QVector2D param = triangulation->getParameterValueForVertex(i);
-//       metricValues[i] = metric->evaluatePoint(bSplines.at(surfId), param.x(), param.y());
-//   }
 
    //min/max is not thread safe -> own for loop
    double min = realvector[0];
@@ -445,8 +317,6 @@ const QVector<QColor> LaplaceSolver::generateColorMap2(QVector<double >realvecto
        if (value > max)
            max = value;
    }
-//   min=-0.039;
-//   max=0.028;
 
    const double valueRange = max-min ;
 
@@ -463,10 +333,8 @@ const QVector<QColor> LaplaceSolver::generateColorMap2(QVector<double >realvecto
        else relativeValue = (realvector[i] - min) / valueRange;
 
        colorMap[i] = QColor(int(relativeValue*255), int(relativeValue*255), int(relativeValue*255));
-       //qDebug()<<relativeValue;
-       //colorMap[i] = QColor(0, 100, 123);
-       }
 
+       }
 
    return colorMap;
 
@@ -556,23 +424,6 @@ const Eigen::VectorXcd LaplaceSolver::getEigenFunction(int id)const{
     return functions.col(id);
 }
 
-//void LaplaceSolver::writeVectors(){
-
-//    for(int i=0;i<80;i++){
-//        QString filename="file"+QString::number(i);
-//        QFile file(filename);
-//        if (!file.open(QIODevice::WriteOnly | QIODevice::Truncate | QIODevice::Text))
-//            return;
-
-//        QTextStream out(&file);
-//        for(int j=0;j<N;j++){
-//            out<<QString::number(functions(i,j).real())<<"\n";
-//        }
-//        file.close();
-//    }
-//}
-
-
 const void LaplaceSolver::writeVector(Eigen::VectorXcd v, QString filename) const{
         QFile file(filename);
         if (!file.open(QIODevice::WriteOnly | QIODevice::Truncate | QIODevice::Text))
@@ -583,5 +434,64 @@ const void LaplaceSolver::writeVector(Eigen::VectorXcd v, QString filename) cons
             out<<QString::number(v(j).real())<<"\n";
         }
         file.close();
-
 }
+//void LaplaceSolver::decompose(){
+
+//    //qDebug()<<"Hi0";
+//    //Eigen::EigenSolver<Eigen::SparseMatrix<double> > es;
+//    //qDebug()<<"Hi1"<<endl;
+
+//    //cout<<Laplacian<<endl;
+//    //es.compute(Laplacian);
+
+//    qDebug()<<"Hi3";
+
+//    int nev=80;
+//    int ncv=200;
+
+//    SparseGenMatProd<double> op(Laplacian);
+//    //GenEigsSolver< double, LARGEST_MAGN, SparseGenMatProd<double> > eigs(&op,nev,ncv);
+//    SymEigsSolver< double, LARGEST_MAGN, SparseGenMatProd<double> > eigs(&op,nev,ncv);
+
+//    eigs.init();
+//    int nconv=eigs.compute();
+
+//    eigenvalues = eigs.eigenvalues();
+
+//    qDebug()<< eigenvalues.rows()<< " " << eigenvalues.cols();
+//    qDebug()<<"Hi4";
+//    qDebug()<<eigs.eigenvectors().rows()<<"x"<<eigs.eigenvectors().cols();
+
+//        //eigs.eigenvectors(i).resize(N,1);
+//    functions=eigs.eigenvectors();
+////        qDebug()<<vec.rows()<<"x"<<vec.cols();
+
+
+//  //      functions.append(eigs.eigenvectors(i));
+////    int r=eigs.eigenvectors().rows();
+////    int c=eigs.eigenvectors().cols();
+////    for(int i=0;i<nev;i++){
+////        for(int j=0;j<N;j++){
+////            functions[i][j]=vec(j,i);
+////        }
+////    }
+//    qDebug()<<"Hi5";
+////    for(int j=0;j<N;j++){
+////        std::complex<double> a= vec(j,3);
+////        qDebug() << a.real() << " "<< a.imag();
+////    }
+//    //cout<<functions[0]<<endl;
+
+
+//    //cout<<functions[0]<<endl;
+////    for(int i=0;i<80;i++){
+////        functions[i]=es.eigenvectors().col(i);
+////    }
+
+////    for(int i=0;i<80;i++){
+////        std::cout<<eigenvalues[i]<<'\n';
+////    }
+////    cout<<(Laplacian*eigs.eigenvectors().col(20))-eigs.eigenvectors().col(20)*eigenvalues[20]<<endl;
+
+
+//}

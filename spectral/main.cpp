@@ -13,43 +13,53 @@
 #include "mainwindow.h"
 #include "controller.h"
 #include "stlwriter.h"
+#include "splinefitter.h"
 #include <QDebug>
 #include<spectralsolver.h>
 #include<closestface.h>
+#include<csvio.h>
+#include <igl/opengl/glfw/Viewer.h>
+
 using namespace std;
 
 
-int main2(int argc, char *argv[]){
-    QString filename="/u/a/agarwala/Desktop/asTorus.obj";
-    Mesh* m=Mesh::loadFromObj(filename);
-    qDebug()<<m->getNumberOfVertices();
-    qDebug()<<m->getNumberOfFaces();
+int main(int argc, char* arg[]){
+    QString qfilename="/u/a/agarwala/Desktop/asTorus.obj";
+
+    string filename=qfilename.toStdString();
+
+    Eigen::MatrixXd V;
+    Eigen::MatrixXi F;
+    //QString dirname, basename, extension, filename;
+    //Eigen::pathinfo(mesh_filename,dirname,basename,extension,filename);
+    bool success = igl::readOBJ(filename,V,F);
+
+    igl::opengl::glfw::Viewer viewer;
+      viewer.data().set_mesh(V, F);
+      viewer.launch();
+
+
 }
 
 
+int main8(int argc, char* argv[]){
 
-int main(int argc, char *argv[]) {
 
-    //QApplication a(argc, argv); //Needed for input widgets (like textbox)
-    qDebug()<<"Hi";
-
-    //get filename for the input stl
-//    QString filename = QFileDialog::getOpenFileName(0, QString("Load triangulation"), QString("../.."), "*.stl");
-//    if (filename.isEmpty())
-//        return -1;
-
-    QString filename2="/u/a/agarwala/Desktop/sphere-d050-sf1-ml_smoothed_downsampled.stl";
+    QString filename1="/u/a/agarwala/Desktop/asymmetrictorus-df0.25_smoothed30.stl";
     //QString filename2="/u/a/agarwala/Desktop/AdaptiveSurfaceReconstruction/project_files/stl_files/sphere-d100-sf1-ml.stl";
-    QString filename1="/u/a/agarwala/Desktop/AdaptiveSurfaceReconstruction/project_files/stl_files/sphere-d050-sf1-ml.stl";
-
-    //QString filename="/u/a/agarwala/Desktop/sphere-d050-sf1-ml_smoothed_downsampled.stl";
+    //QString filename1="/u/a/agarwala/Desktop/AdaptiveSurfaceReconstruction/project_files/stl_files/sphere-d050-sf1-ml.stl";
+    QString filename="/u/a/agarwala/Desktop/asTorus.obj";
 
     //load stl file
     qDebug()<<"stl loaded";
-    Mesh *m = Mesh::loadFromBinaryStl(filename2);
+
+
+    //Mesh *m = Mesh::loadFromBinaryStl(filename2);
+
+    Mesh* m=Mesh::loadFromObj(filename);
     Mesh *mdash = Mesh::loadFromBinaryStl(filename1);
+
     int numberOfDataPoints=mdash->getNumberOfVertices();
-    //int N=m->getNumberOfVertices();
 
     qDebug()<<"Meshes loaded";
 
@@ -61,36 +71,352 @@ int main(int argc, char *argv[]) {
         vertices[i][1]=mdash->getVertex(i)->getPosY();
         vertices[i][2]=mdash->getVertex(i)->getPosZ();
     }
+
+    for(int i=0;i<m->getNumberOfFaces();i++){
+        Vertex* v0=m->getFace(i)->getVertex(0);
+        Vertex* v1=m->getFace(i)->getVertex(1);
+        Vertex* v2=m->getFace(i)->getVertex(2);
+
+//        QVector3D centroid= (v0->getPosition()+v1->getPosition()+v2->getPosition())/3;
+//        vertices.push_back(centroid);
+    }
+
+
+
+
+      //QVector<QVector3D> projections= closestface::loadProjectionsQuadMesh(m,vertices);
+        QVector<int> pointmap=closestface::loadFaceMapQuadMesh(m,vertices);
+
+        QVector<QVector3D> defectpoints(0);
+
+        for(int i=0;i<numberOfDataPoints;i++){
+            if(pointmap[i]==m->getNumberOfFaces()-2){
+                defectpoints.push_back(vertices[i]);
+
+                if(pointmap[i+1] != m->getNumberOfFaces()-2 || pointmap[i-1] != m->getNumberOfFaces()-2)
+                    defectpoints.push_back(vertices[i]);
+
+            }
+        }
+
+        qDebug()<<"defect points vector generated";
+
+        QVector<QVector3D> projections= closestface::loadProjectionsQuadMesh(m,defectpoints);
+
+        qDebug()<< "projections created";
+
+      StlWriter debugWriter("../out/", false, false, false);
+      QVector<Edge*> lines;
+
+      //create lines between the point and its projection
+      for (int i = 0; i < defectpoints.size(); i++) {
+      Vertex *pointCloudPoint = new Vertex(defectpoints[i],-1);
+      Vertex *projection = new Vertex(projections[i],-1); //YYY is of type QVector3D
+      lines << new Edge(pointCloudPoint , projection , -1);
+      }
+
+      debugWriter.writeEdgesToStl(&lines,"projectionVisualizationdefects_approach2.stl" );
+
+      //clean up
+      for (int i = 0; i < defectpoints.size(); i++) {
+      delete lines[i]->getVertex(0);
+      delete lines[i]->getVertex(1);
+      delete lines[i];
+      }
+
+      return 0;
+}
+
+
+int main7(int argc, char* argv[]){
+
+    QString filename1="/u/a/agarwala/Desktop/asymmetrictorus-df0.25_smoothed30.stl";
+    //QString filename2="/u/a/agarwala/Desktop/AdaptiveSurfaceReconstruction/project_files/stl_files/sphere-d100-sf1-ml.stl";
+    //QString filename1="/u/a/agarwala/Desktop/AdaptiveSurfaceReconstruction/project_files/stl_files/sphere-d050-sf1-ml.stl";
+    QString filename="/u/a/agarwala/Desktop/asTorus.obj";
+
+    //load stl file
+    qDebug()<<"stl loaded";
+
+
+    //Mesh *m = Mesh::loadFromBinaryStl(filename2);
+
+    Mesh* m=Mesh::loadFromObj(filename);
+    Mesh *mdash = Mesh::loadFromBinaryStl(filename1);
+
+    int numberOfDataPoints=mdash->getNumberOfVertices();
+
+    qDebug()<<"Meshes loaded";
+
+
+    QVector<QVector3D> vertices(numberOfDataPoints);
+
+    for(int i=0;i<numberOfDataPoints;i++){
+        vertices[i][0]=mdash->getVertex(i)->getPosX();
+        vertices[i][1]=mdash->getVertex(i)->getPosY();
+        vertices[i][2]=mdash->getVertex(i)->getPosZ();
+    }
+
+
+      QVector<QVector3D> projections= closestface::loadProjectionsQuadMesh(m,vertices);
+      StlWriter debugWriter("../out/", false, false, false);
+      QVector<Edge*> lines;
+
+      //create lines between the point and its projection
+      for (int i = 0; i < numberOfDataPoints; i++) {
+      Vertex *pointCloudPoint = mdash->getVertex(i);
+      Vertex *projection = new Vertex(projections[i],-1); //YYY is of type QVector3D
+      lines << new Edge(pointCloudPoint , projection , -1);
+      }
+
+      debugWriter.writeEdgesToStl(&lines,"projectionVisualization.stl" );
+
+      //clean up
+      for (int i = 0; i < numberOfDataPoints; i++) {
+      delete lines[i]->getVertex(0);
+      delete lines[i]->getVertex(1);
+      delete lines[i];
+      }
+
+      return 0;
+}
+
+int main6(int argc, char *argv[]){
+    QString filename="/u/a/agarwala/Desktop/AdaptiveSurfaceReconstruction/project_files/stl_files/sphere-d050-sf1-ml.stl";
+    Mesh* m=Mesh::loadFromBinaryStl(filename);
+
+    QVector<QVector3D> vertices(m->getNumberOfVertices());
+
+    for(int i=0;i<m->getNumberOfVertices();i++){
+        vertices[i]=m->getVertex(i)->getPosition();
+    }
+
+    csvio::createCsvFromVector(vertices,"sphere-d050-sf1-ml-vertices");
+
+    return 0;
+}
+
+int main5(int argc, char *argv[]){
+
+    QString filename="/u/a/agarwala/Desktop/asTorus.obj";
+    Mesh* m=Mesh::loadFromObj(filename);
+
+    qDebug()<<m->getNumberOfVertices();
+    qDebug()<<m->getNumberOfFaces();
+
+    const int numFaces = m->getNumberOfFaces();
+    QVector<Face *> faces(numFaces);
+
+    for (int i = 0; i < numFaces; i++)
+        faces[i] = m->getFace(i);
+
+    StlWriter debugWriter("../out/", false, false, false);
+
+    debugWriter.writeMeshFacesToStl(m,"objMeshbin");
+
+    return 0;
+}
+
+
+int main4(int argc, char *argv[]) {
+
+    QString filename1="/u/a/agarwala/Desktop/asymmetrictorus-df0.25_smoothed30.stl";
+    //QString filename2="/u/a/agarwala/Desktop/AdaptiveSurfaceReconstruction/project_files/stl_files/sphere-d100-sf1-ml.stl";
+    //QString filename1="/u/a/agarwala/Desktop/AdaptiveSurfaceReconstruction/project_files/stl_files/sphere-d050-sf1-ml.stl";
+    QString filename="/u/a/agarwala/Desktop/asTorus.obj";
+    //load stl file
+    qDebug()<<"stl loaded";
+
+
+    //Mesh *m = Mesh::loadFromBinaryStl(filename2);
+
+    Mesh* m=Mesh::loadFromObj(filename);
+    Mesh *mdash = Mesh::loadFromBinaryStl(filename1);
+
+    int numberOfDataPoints=mdash->getNumberOfVertices();
+
+    qDebug()<<"Meshes loaded";
+
+
+    QVector<QVector3D> vertices(numberOfDataPoints);
+
+    for(int i=0;i<numberOfDataPoints;i++){
+        vertices[i][0]=mdash->getVertex(i)->getPosX();
+        vertices[i][1]=mdash->getVertex(i)->getPosY();
+        vertices[i][2]=mdash->getVertex(i)->getPosZ();
+    }
+
+    for(int i=0;i<m->getNumberOfFaces();i++){
+        Vertex* v0=m->getFace(i)->getVertex(0);
+        Vertex* v1=m->getFace(i)->getVertex(1);
+        Vertex* v2=m->getFace(i)->getVertex(2);
+
+        QVector3D centroid= (v0->getPosition()+v1->getPosition()+v2->getPosition())/3;
+        vertices.push_back(centroid);
+    }
+
     qDebug() << "vertices created";
 
-//    QVector<QVector<double> > pointmap=closestface::computeBarycentreCoordinates(m,vertices);
-    QVector<int> pointmap=closestface::loadFaceMap(m,vertices);
-    qDebug() << pointmap;
-    QVector<QVector3D> projections= closestface::loadProjections(m,vertices);
+    //QVector<QVector<double> > pointmap=closestface::computeBarycentreCoordinates(m,vertices);
+    QVector<int> pointFaceMap=closestface::loadFaceMap(m,vertices);
+
+    //qDebug()<<pointFaceMap;
+
+  //  QVector<BSplineSurface *> surfaces(m->getNumberOfFaces());
+    QVector<BSplineSurface *> surfaces(1);
+
+//    for(int k=0;k<m->getNumberOfFaces();k++){
+
+        QVector<QVector3D > pointsface1(0);
+
+
+        for(int i=0;i<numberOfDataPoints;i++){
+            if(pointFaceMap[i]==m->getNumberOfFaces()-2){          ////
+                pointsface1.push_back(vertices[i]);
+            }
+        }
+
+        QVector<QVector2D> face1Parameters=closestface::parametrizationQuadMesh(m,pointsface1);
+
+
+        QFile file("badFaceParameters");
+        if (!file.open(QIODevice::WriteOnly | QIODevice::Truncate | QIODevice::Text))
+            return 2;
+        QTextStream out(&file);
+
+        for (int i = 0; i < face1Parameters.size() ; i++) {
+
+            out << QString::number(face1Parameters[i].x()) << " , " << QString::number(face1Parameters[i].y()) << '\n';
+        }
+
+        file.close();
+
+        QVector<QPair<QVector3D, QVector2D> > data1(pointsface1.size());
+
+        for(int i=0;i<pointsface1.size();i++){
+            data1[i].first=pointsface1[i];
+            data1[i].second=face1Parameters[i];
+        }
+
+        const int numberOfControlPoints = 4;
+        BSplineProperties *properties = BSplineProperties::createInstanceUniformKnotVectorMultipleEnds(3,numberOfControlPoints,0,1);
+        Eigen::SparseMatrix<double> energyMatrix(numberOfControlPoints * numberOfControlPoints, numberOfControlPoints * numberOfControlPoints);
+
+        Splinefitter fitter(0, properties);
+
+        fitter.setEnergyMatrix(energyMatrix);
+
+        BSplineSurface *surf = fitter.fitSingleSurface_noConstraintsNew(data1, 1, 0);
+
+        surfaces[0]=surf;//
+
+//    }
 
 
 
-  StlWriter debugWriter("../out/", false, false, false);
+
+    StlWriter debugWriter("../out/", false, false, false);
+    debugWriter.writeBSplineSurfacesToStl(surfaces, "BSplines_debug.stl", 31);
+
+    qDebug()<<"All done";
+
+    return 0;
+}
+
+int main2(int argc, char *argv[]) {
+
+    QString filename1="/u/a/agarwala/Desktop/asymmetrictorus-df0.25_smoothed30.stl";
+    //QString filename2="/u/a/agarwala/Desktop/AdaptiveSurfaceReconstruction/project_files/stl_files/sphere-d100-sf1-ml.stl";
+    //QString filename1="/u/a/agarwala/Desktop/AdaptiveSurfaceReconstruction/project_files/stl_files/sphere-d050-sf1-ml.stl";
+    QString filename="/u/a/agarwala/Desktop/asTorus.obj";
+    //load stl file
+    qDebug()<<"stl loaded";
 
 
-  QVector<Edge*> lines;
+    //Mesh *m = Mesh::loadFromBinaryStl(filename2);
 
-  //create lines between the point and its projection
-  for (int i = 0; i < numberOfDataPoints; i++) {
-  Vertex *pointCloudPoint = mdash->getVertex(i);
-  Vertex *projection = new Vertex(projections[i],-1); //YYY is of type QVector3D
-  lines << new Edge(pointCloudPoint , projection , -1);
-  }
+    Mesh* m=Mesh::loadFromObj(filename);
+    Mesh *mdash = Mesh::loadFromBinaryStl(filename1);
 
-  debugWriter.writeEdgesToStl(&lines,"projectionVisualization.stl" );
+    int numberOfDataPoints=mdash->getNumberOfVertices();
 
-  //clean up
-  for (int i = 0; i < numberOfDataPoints; i++) {
-  delete lines[i]->getVertex(0);
-  delete lines[i]->getVertex(1);
-  delete lines[i];
-  }
+    qDebug()<<"Meshes loaded";
 
+
+    QVector<QVector3D> vertices(numberOfDataPoints);
+
+    for(int i=0;i<numberOfDataPoints;i++){
+        vertices[i][0]=mdash->getVertex(i)->getPosX();
+        vertices[i][1]=mdash->getVertex(i)->getPosY();
+        vertices[i][2]=mdash->getVertex(i)->getPosZ();
+
+    }
+
+    for(int i=0;i<m->getNumberOfFaces();i++){
+        Vertex* v0=m->getFace(i)->getVertex(0);
+        Vertex* v1=m->getFace(i)->getVertex(1);
+        Vertex* v2=m->getFace(i)->getVertex(2);
+
+        QVector3D centroid= (v0->getPosition()+v1->getPosition()+v2->getPosition())/3;
+        vertices.push_back(centroid);
+    }
+    qDebug() << "vertices created";
+
+    //QVector<QVector<double> > pointmap=closestface::computeBarycentreCoordinates(m,vertices);
+    QVector<int> pointFaceMap=closestface::loadFaceMap(m,vertices);
+
+    //qDebug()<<pointFaceMap;
+
+    QVector<BSplineSurface *> surfaces(m->getNumberOfFaces());
+    //QVector<BSplineSurface *> surfaces(1);
+
+    for(int k=0;k<m->getNumberOfFaces();k++){
+
+        QVector<QVector3D > pointsface1(0);
+
+
+        for(int i=0;i<numberOfDataPoints;i++){
+            if(pointFaceMap[i]==k){
+                pointsface1.push_back(vertices[i]);
+            }
+        }
+
+//        pointsface1.push_back(m->getFace(k)->getVertex(0)->getPosition());
+//        pointsface1.push_back(m->getFace(k)->getVertex(1)->getPosition());
+//        pointsface1.push_back(m->getFace(k)->getVertex(2)->getPosition());
+//        pointsface1.push_back(m->getFace(k)->getVertex(3)->getPosition());
+
+
+        QVector<QVector2D> face1Parameters=closestface::parametrizationQuadMesh(m,pointsface1);
+
+        QVector<QPair<QVector3D, QVector2D> > data1(pointsface1.size());
+
+        for(int i=0;i<pointsface1.size();i++){
+            data1[i].first=pointsface1[i];
+            data1[i].second=face1Parameters[i];
+        }
+
+        const int numberOfControlPoints = 4;
+        BSplineProperties *properties = BSplineProperties::createInstanceUniformKnotVectorMultipleEnds(3,numberOfControlPoints,0,1);
+        Eigen::SparseMatrix<double> energyMatrix(numberOfControlPoints * numberOfControlPoints, numberOfControlPoints * numberOfControlPoints);
+
+        Splinefitter fitter(0, properties);
+
+        fitter.setEnergyMatrix(energyMatrix);
+
+        BSplineSurface *surf = fitter.fitSingleSurface_noConstraintsNew(data1, 1, 0);
+
+        surfaces[k]=surf;//
+
+    }
+
+
+
+
+    StlWriter debugWriter("../out/", false, false, false);
+    debugWriter.writeBSplineSurfacesToStl(surfaces, "BSplines_debug_whole.stl", 31);
+
+    qDebug()<<"All done";
 
     return 0;
 }
@@ -130,7 +456,7 @@ int main3(int argc, char *argv[]) {
 
 
 
-    QVector<QColor> colorMap=spectralsolver::generateColorMap2(v);
+    QVector<QColor> colorMap=spectralsolver::generateColorMapBnW(v);
 
     qDebug()<< "Color map generated";
 

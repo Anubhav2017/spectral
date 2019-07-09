@@ -91,9 +91,9 @@ SOURCES       = ../spectral/main.cpp \
 		../spectral/MBSI/subsurfacetree.cpp \
 		../spectral/MBSI/subdivisioninspectionanglemetric.cpp \
 		../spectral/laplacesolver.cpp \
-		../spectral/spectral1.cpp \
 		../spectral/spectralsolver.cpp \
-		../spectral/closestface.cpp moc_mainwindow.cpp
+		../spectral/closestface.cpp \
+		../spectral/csvio.cpp moc_mainwindow.cpp
 OBJECTS       = main.o \
 		mainwindow.o \
 		edge.o \
@@ -135,9 +135,9 @@ OBJECTS       = main.o \
 		subsurfacetree.o \
 		subdivisioninspectionanglemetric.o \
 		laplacesolver.o \
-		spectral1.o \
 		spectralsolver.o \
 		closestface.o \
+		csvio.o \
 		moc_mainwindow.o
 DIST          = /usr/lib64/qt5/mkspecs/features/spec_pre.prf \
 		/usr/lib64/qt5/mkspecs/common/unix.conf \
@@ -340,7 +340,8 @@ DIST          = /usr/lib64/qt5/mkspecs/features/spec_pre.prf \
 		../spectral/quadmeshgeneration.h \
 		../spectral/laplacesolver.h \
 		../spectral/spectralsolver.h \
-		../spectral/closestface.h ../spectral/main.cpp \
+		../spectral/closestface.h \
+		../spectral/csvio.h ../spectral/main.cpp \
 		../spectral/mainwindow.cpp \
 		../spectral/Mesh/edge.cpp \
 		../spectral/Mesh/vertex.cpp \
@@ -381,9 +382,9 @@ DIST          = /usr/lib64/qt5/mkspecs/features/spec_pre.prf \
 		../spectral/MBSI/subsurfacetree.cpp \
 		../spectral/MBSI/subdivisioninspectionanglemetric.cpp \
 		../spectral/laplacesolver.cpp \
-		../spectral/spectral1.cpp \
 		../spectral/spectralsolver.cpp \
-		../spectral/closestface.cpp
+		../spectral/closestface.cpp \
+		../spectral/csvio.cpp
 QMAKE_TARGET  = spectral
 DESTDIR       = 
 TARGET        = spectral
@@ -731,8 +732,8 @@ distdir: FORCE
 	@test -d $(DISTDIR) || mkdir -p $(DISTDIR)
 	$(COPY_FILE) --parents $(DIST) $(DISTDIR)/
 	$(COPY_FILE) --parents /usr/lib64/qt5/mkspecs/features/data/dummy.cpp $(DISTDIR)/
-	$(COPY_FILE) --parents ../spectral/mainwindow.h ../spectral/Mesh/edge.h ../spectral/Mesh/vertex.h ../spectral/Mesh/face.h ../spectral/Mesh/mesh.h ../spectral/CellMesh/cellvertex.h ../spectral/CellMesh/celledge.h ../spectral/CellMesh/cellface.h ../spectral/CellMesh/cellmesh.h ../spectral/CellMesh/polylinevertex.h ../spectral/CellMesh/parameterization.h ../spectral/SurfaceTessellation/priorityqueue.h ../spectral/SurfaceTessellation/surfacevoronoigenerator.h ../spectral/SurfaceTessellation/quadmeshgenerator.h ../spectral/SurfaceTessellation/blossomgraphmatching.h ../spectral/BSpline/bsplinesurface.h ../spectral/BSpline/bsplinecurve.h ../spectral/BSpline/bsplinepatchnetwork.h ../spectral/BSpline/bsplinetriangulation.h ../spectral/MBSI/viewpointcandidategenerator.h ../spectral/MBSI/subdivisionabstractmetric.h ../spectral/MBSI/subdivisionthinplateenergymetric.h ../spectral/MBSI/subdivisionexactcurvaturemetric.h ../spectral/MBSI/subdivisionsurfaceareametric.h ../spectral/MBSI/subdivisionmanualhighlightmetric.h ../spectral/MBSI/subdivisionnormaldeviationmetric.h ../spectral/MBSI/colormapgenerator.h ../spectral/stlwriter.h ../spectral/splinefitter.h ../spectral/parameteroptimizer.h ../spectral/voxelizer.h ../spectral/splineevaluator.h ../spectral/external/DataIO.h ../spectral/external/Miniball.hpp ../spectral/external/IASS.h ../spectral/controller.h ../spectral/energymatrixgenerator.h ../spectral/plywriter.h ../spectral/BSpline/bsplineproperties.h ../spectral/MBSI/surfacesubdivider.h ../spectral/MBSI/subsurfacetree.h ../spectral/MBSI/subdivisioninspectionanglemetric.h ../spectral/quadmeshgeneration.h ../spectral/laplacesolver.h ../spectral/spectralsolver.h ../spectral/closestface.h $(DISTDIR)/
-	$(COPY_FILE) --parents ../spectral/main.cpp ../spectral/mainwindow.cpp ../spectral/Mesh/edge.cpp ../spectral/Mesh/vertex.cpp ../spectral/Mesh/face.cpp ../spectral/Mesh/mesh.cpp ../spectral/CellMesh/cellvertex.cpp ../spectral/CellMesh/celledge.cpp ../spectral/CellMesh/cellface.cpp ../spectral/CellMesh/cellmesh.cpp ../spectral/CellMesh/polylinevertex.cpp ../spectral/CellMesh/parameterization.cpp ../spectral/SurfaceTessellation/surfacevoronoigenerator.cpp ../spectral/SurfaceTessellation/quadmeshgenerator.cpp ../spectral/SurfaceTessellation/blossomgraphmatching.cpp ../spectral/BSpline/bsplinesurface.cpp ../spectral/BSpline/bsplinecurve.cpp ../spectral/BSpline/bsplinepatchnetwork.cpp ../spectral/BSpline/bsplinetriangulation.cpp ../spectral/MBSI/viewpointcandidategenerator.cpp ../spectral/MBSI/subdivisionthinplateenergymetric.cpp ../spectral/MBSI/subdivisionexactcurvaturemetric.cpp ../spectral/MBSI/subdivisionsurfaceareametric.cpp ../spectral/MBSI/subdivisionmanualhighlightmetric.cpp ../spectral/MBSI/subdivisionnormaldeviationmetric.cpp ../spectral/MBSI/colormapgenerator.cpp ../spectral/stlwriter.cpp ../spectral/splinefitter.cpp ../spectral/parameteroptimizer.cpp ../spectral/voxelizer.cpp ../spectral/splineevaluator.cpp ../spectral/external/DataIO.cpp ../spectral/external/IASS.cpp ../spectral/controller.cpp ../spectral/energymatrixgenerator.cpp ../spectral/plywriter.cpp ../spectral/BSpline/bsplineproperties.cpp ../spectral/MBSI/surfacesubdivider.cpp ../spectral/MBSI/subsurfacetree.cpp ../spectral/MBSI/subdivisioninspectionanglemetric.cpp ../spectral/laplacesolver.cpp ../spectral/spectral1.cpp ../spectral/spectralsolver.cpp ../spectral/closestface.cpp $(DISTDIR)/
+	$(COPY_FILE) --parents ../spectral/mainwindow.h ../spectral/Mesh/edge.h ../spectral/Mesh/vertex.h ../spectral/Mesh/face.h ../spectral/Mesh/mesh.h ../spectral/CellMesh/cellvertex.h ../spectral/CellMesh/celledge.h ../spectral/CellMesh/cellface.h ../spectral/CellMesh/cellmesh.h ../spectral/CellMesh/polylinevertex.h ../spectral/CellMesh/parameterization.h ../spectral/SurfaceTessellation/priorityqueue.h ../spectral/SurfaceTessellation/surfacevoronoigenerator.h ../spectral/SurfaceTessellation/quadmeshgenerator.h ../spectral/SurfaceTessellation/blossomgraphmatching.h ../spectral/BSpline/bsplinesurface.h ../spectral/BSpline/bsplinecurve.h ../spectral/BSpline/bsplinepatchnetwork.h ../spectral/BSpline/bsplinetriangulation.h ../spectral/MBSI/viewpointcandidategenerator.h ../spectral/MBSI/subdivisionabstractmetric.h ../spectral/MBSI/subdivisionthinplateenergymetric.h ../spectral/MBSI/subdivisionexactcurvaturemetric.h ../spectral/MBSI/subdivisionsurfaceareametric.h ../spectral/MBSI/subdivisionmanualhighlightmetric.h ../spectral/MBSI/subdivisionnormaldeviationmetric.h ../spectral/MBSI/colormapgenerator.h ../spectral/stlwriter.h ../spectral/splinefitter.h ../spectral/parameteroptimizer.h ../spectral/voxelizer.h ../spectral/splineevaluator.h ../spectral/external/DataIO.h ../spectral/external/Miniball.hpp ../spectral/external/IASS.h ../spectral/controller.h ../spectral/energymatrixgenerator.h ../spectral/plywriter.h ../spectral/BSpline/bsplineproperties.h ../spectral/MBSI/surfacesubdivider.h ../spectral/MBSI/subsurfacetree.h ../spectral/MBSI/subdivisioninspectionanglemetric.h ../spectral/quadmeshgeneration.h ../spectral/laplacesolver.h ../spectral/spectralsolver.h ../spectral/closestface.h ../spectral/csvio.h $(DISTDIR)/
+	$(COPY_FILE) --parents ../spectral/main.cpp ../spectral/mainwindow.cpp ../spectral/Mesh/edge.cpp ../spectral/Mesh/vertex.cpp ../spectral/Mesh/face.cpp ../spectral/Mesh/mesh.cpp ../spectral/CellMesh/cellvertex.cpp ../spectral/CellMesh/celledge.cpp ../spectral/CellMesh/cellface.cpp ../spectral/CellMesh/cellmesh.cpp ../spectral/CellMesh/polylinevertex.cpp ../spectral/CellMesh/parameterization.cpp ../spectral/SurfaceTessellation/surfacevoronoigenerator.cpp ../spectral/SurfaceTessellation/quadmeshgenerator.cpp ../spectral/SurfaceTessellation/blossomgraphmatching.cpp ../spectral/BSpline/bsplinesurface.cpp ../spectral/BSpline/bsplinecurve.cpp ../spectral/BSpline/bsplinepatchnetwork.cpp ../spectral/BSpline/bsplinetriangulation.cpp ../spectral/MBSI/viewpointcandidategenerator.cpp ../spectral/MBSI/subdivisionthinplateenergymetric.cpp ../spectral/MBSI/subdivisionexactcurvaturemetric.cpp ../spectral/MBSI/subdivisionsurfaceareametric.cpp ../spectral/MBSI/subdivisionmanualhighlightmetric.cpp ../spectral/MBSI/subdivisionnormaldeviationmetric.cpp ../spectral/MBSI/colormapgenerator.cpp ../spectral/stlwriter.cpp ../spectral/splinefitter.cpp ../spectral/parameteroptimizer.cpp ../spectral/voxelizer.cpp ../spectral/splineevaluator.cpp ../spectral/external/DataIO.cpp ../spectral/external/IASS.cpp ../spectral/controller.cpp ../spectral/energymatrixgenerator.cpp ../spectral/plywriter.cpp ../spectral/BSpline/bsplineproperties.cpp ../spectral/MBSI/surfacesubdivider.cpp ../spectral/MBSI/subsurfacetree.cpp ../spectral/MBSI/subdivisioninspectionanglemetric.cpp ../spectral/laplacesolver.cpp ../spectral/spectralsolver.cpp ../spectral/closestface.cpp ../spectral/csvio.cpp $(DISTDIR)/
 	$(COPY_FILE) --parents ../spectral/mainwindow.ui $(DISTDIR)/
 
 
@@ -1158,6 +1159,7 @@ main.o: ../spectral/main.cpp ../spectral/laplacesolver.h \
 		../spectral/MBSI/subdivisionabstractmetric.h \
 		../spectral/stlwriter.h \
 		../spectral/MBSI/subsurfacetree.h \
+		../spectral/splinefitter.h \
 		../spectral/spectralsolver.h \
 		../spectral/closestface.h \
 		../external/igl/point_mesh_squared_distance.h \
@@ -1181,7 +1183,104 @@ main.o: ../spectral/main.cpp ../spectral/laplacesolver.h \
 		../external/igl/ray_box_intersect.cpp \
 		../external/igl/ray_mesh_intersect.h \
 		../external/igl/ray_mesh_intersect.cpp \
-		../external/igl/raytri.c
+		../external/igl/raytri.c \
+		../spectral/csvio.h \
+		../external/igl/opengl/glfw/Viewer.h \
+		../external/igl/opengl/MeshGL.h \
+		../external/igl/opengl/MeshGL.cpp \
+		../external/igl/opengl/bind_vertex_attrib_array.h \
+		../external/igl/opengl/gl.h \
+		../external/glad/glad.h \
+		../external/KHR/khrplatform.h \
+		../external/igl/opengl/bind_vertex_attrib_array.cpp \
+		../external/igl/opengl/create_shader_program.h \
+		../external/igl/opengl/create_shader_program.cpp \
+		../external/igl/opengl/load_shader.h \
+		../external/igl/opengl/load_shader.cpp \
+		../external/igl/opengl/print_shader_info_log.h \
+		../external/igl/opengl/print_shader_info_log.cpp \
+		../external/igl/opengl/print_program_info_log.h \
+		../external/igl/opengl/print_program_info_log.cpp \
+		../external/igl/opengl/destroy_shader_program.h \
+		../external/igl/opengl/destroy_shader_program.cpp \
+		../external/igl/opengl/report_gl_error.h \
+		../external/igl/opengl/report_gl_error.cpp \
+		../external/igl/opengl/ViewerCore.h \
+		../external/igl/serialize.h \
+		../external/igl/opengl/ViewerCore.cpp \
+		../external/igl/opengl/ViewerData.h \
+		../external/igl/opengl/ViewerData.cpp \
+		../external/igl/per_face_normals.h \
+		../external/igl/per_face_normals.cpp \
+		../external/igl/material_colors.h \
+		../external/igl/parula.h \
+		../external/igl/parula.cpp \
+		../external/igl/colormap.h \
+		../external/igl/colormap.cpp \
+		../external/igl/jet.h \
+		../external/igl/jet.cpp \
+		../external/igl/per_vertex_normals.h \
+		../external/igl/per_vertex_normals.cpp \
+		../external/igl/get_seconds.h \
+		../external/igl/get_seconds.cpp \
+		../external/igl/internal_angles.h \
+		../external/igl/internal_angles.cpp \
+		../external/igl/quat_to_mat.h \
+		../external/igl/quat_to_mat.cpp \
+		../external/igl/snap_to_fixed_up.h \
+		../external/igl/snap_to_fixed_up.cpp \
+		../external/igl/look_at.h \
+		../external/igl/look_at.cpp \
+		../external/igl/frustum.h \
+		../external/igl/frustum.cpp \
+		../external/igl/ortho.h \
+		../external/igl/ortho.cpp \
+		../external/igl/massmatrix.h \
+		../external/igl/massmatrix.cpp \
+		../external/igl/massmatrix_intrinsic.h \
+		../external/igl/massmatrix_intrinsic.cpp \
+		../external/igl/normalize_row_sums.h \
+		../external/igl/normalize_row_sums.cpp \
+		../external/igl/sparse.h \
+		../external/igl/sparse.cpp \
+		../external/igl/repmat.h \
+		../external/igl/repmat.cpp \
+		../external/igl/PI.h \
+		../external/igl/opengl/glfw/ViewerPlugin.h \
+		../external/igl/opengl/glfw/Viewer.cpp \
+		../spectral/Eigen/LU \
+		../external/igl/project.h \
+		../external/igl/project.cpp \
+		../external/igl/readOFF.h \
+		../external/igl/readOFF.cpp \
+		../external/igl/adjacency_list.h \
+		../external/igl/adjacency_list.cpp \
+		../external/igl/writeOBJ.h \
+		../external/igl/writeOBJ.cpp \
+		../external/igl/writeOFF.h \
+		../external/igl/writeOFF.cpp \
+		../external/igl/file_dialog_open.h \
+		../external/igl/file_dialog_open.cpp \
+		../external/igl/file_dialog_save.h \
+		../external/igl/file_dialog_save.cpp \
+		../external/igl/quat_mult.h \
+		../external/igl/quat_mult.cpp \
+		../external/igl/axis_angle_to_quat.h \
+		../external/igl/axis_angle_to_quat.cpp \
+		../external/igl/trackball.h \
+		../external/igl/trackball.cpp \
+		../external/igl/dot.h \
+		../external/igl/dot.cpp \
+		../external/igl/two_axis_valuator_fixed_up.h \
+		../external/igl/two_axis_valuator_fixed_up.cpp \
+		../external/igl/snap_to_canonical_view_quat.h \
+		../external/igl/snap_to_canonical_view_quat.cpp \
+		../external/igl/canonical_quaternions.h \
+		../external/igl/canonical_quaternions.cpp \
+		../external/igl/normalize_quat.h \
+		../external/igl/normalize_quat.cpp \
+		../external/igl/unproject.h \
+		../external/igl/unproject.cpp
 	$(CXX) -c $(CXXFLAGS) $(INCPATH) -o main.o ../spectral/main.cpp
 
 mainwindow.o: ../spectral/mainwindow.cpp ../spectral/mainwindow.h \
@@ -6654,365 +6753,6 @@ laplacesolver.o: ../spectral/laplacesolver.cpp ../spectral/laplacesolver.h \
 		../external/igl/dihedral_angles.cpp
 	$(CXX) -c $(CXXFLAGS) $(INCPATH) -o laplacesolver.o ../spectral/laplacesolver.cpp
 
-spectral1.o: ../spectral/spectral1.cpp ../spectral/laplacesolver.h \
-		../spectral/Mesh/vertex.h \
-		../spectral/Mesh/edge.h \
-		../spectral/Mesh/mesh.h \
-		../spectral/Mesh/face.h \
-		../external/Eigen/Eigen \
-		../external/Eigen/Dense \
-		../external/Eigen/Core \
-		../external/Eigen/src/Core/util/DisableStupidWarnings.h \
-		../external/Eigen/src/Core/util/Macros.h \
-		../external/Eigen/src/Core/util/MKL_support.h \
-		../external/Eigen/src/misc/blas.h \
-		../external/Eigen/src/Core/util/Constants.h \
-		../external/Eigen/src/Core/util/Meta.h \
-		../external/Eigen/src/Core/util/ForwardDeclarations.h \
-		../external/Eigen/src/Core/util/StaticAssert.h \
-		../external/Eigen/src/Core/util/XprHelper.h \
-		../external/Eigen/src/Core/util/Memory.h \
-		../external/Eigen/src/Core/NumTraits.h \
-		../external/Eigen/src/Core/MathFunctions.h \
-		../external/Eigen/src/Core/GenericPacketMath.h \
-		../external/Eigen/src/Core/MathFunctionsImpl.h \
-		../external/Eigen/src/Core/arch/SSE/PacketMath.h \
-		../external/Eigen/src/Core/arch/AVX/PacketMath.h \
-		../external/Eigen/src/Core/arch/AVX512/PacketMath.h \
-		../external/Eigen/src/Core/arch/AVX512/MathFunctions.h \
-		../external/Eigen/src/Core/arch/SSE/Complex.h \
-		../external/Eigen/src/Core/arch/SSE/MathFunctions.h \
-		../external/Eigen/src/Core/arch/AVX/MathFunctions.h \
-		../external/Eigen/src/Core/arch/AVX/Complex.h \
-		../external/Eigen/src/Core/arch/AVX/TypeCasting.h \
-		../external/Eigen/src/Core/arch/SSE/TypeCasting.h \
-		../external/Eigen/src/Core/arch/AltiVec/PacketMath.h \
-		../external/Eigen/src/Core/arch/AltiVec/MathFunctions.h \
-		../external/Eigen/src/Core/arch/AltiVec/Complex.h \
-		../external/Eigen/src/Core/arch/NEON/PacketMath.h \
-		../external/Eigen/src/Core/arch/NEON/MathFunctions.h \
-		../external/Eigen/src/Core/arch/NEON/Complex.h \
-		../external/Eigen/src/Core/arch/ZVector/PacketMath.h \
-		../external/Eigen/src/Core/arch/ZVector/MathFunctions.h \
-		../external/Eigen/src/Core/arch/ZVector/Complex.h \
-		../external/Eigen/src/Core/arch/CUDA/Half.h \
-		../external/Eigen/src/Core/arch/CUDA/PacketMathHalf.h \
-		../external/Eigen/src/Core/arch/CUDA/TypeCasting.h \
-		../external/Eigen/src/Core/arch/CUDA/PacketMath.h \
-		../external/Eigen/src/Core/arch/CUDA/MathFunctions.h \
-		../external/Eigen/src/Core/arch/Default/Settings.h \
-		../external/Eigen/src/Core/functors/TernaryFunctors.h \
-		../external/Eigen/src/Core/functors/BinaryFunctors.h \
-		../external/Eigen/src/Core/functors/UnaryFunctors.h \
-		../external/Eigen/src/Core/functors/NullaryFunctors.h \
-		../external/Eigen/src/Core/functors/StlFunctors.h \
-		../external/Eigen/src/Core/functors/AssignmentFunctors.h \
-		../external/Eigen/src/Core/arch/CUDA/Complex.h \
-		../external/Eigen/src/Core/DenseCoeffsBase.h \
-		../external/Eigen/src/Core/DenseBase.h \
-		../external/Eigen/src/plugins/BlockMethods.h \
-		../external/Eigen/src/Core/MatrixBase.h \
-		../external/Eigen/src/plugins/CommonCwiseUnaryOps.h \
-		../external/Eigen/src/plugins/CommonCwiseBinaryOps.h \
-		../external/Eigen/src/plugins/MatrixCwiseUnaryOps.h \
-		../external/Eigen/src/plugins/MatrixCwiseBinaryOps.h \
-		../external/Eigen/src/Core/EigenBase.h \
-		../external/Eigen/src/Core/Product.h \
-		../external/Eigen/src/Core/CoreEvaluators.h \
-		../external/Eigen/src/Core/AssignEvaluator.h \
-		../external/Eigen/src/Core/Assign.h \
-		../external/Eigen/src/Core/ArrayBase.h \
-		../external/Eigen/src/plugins/ArrayCwiseUnaryOps.h \
-		../external/Eigen/src/plugins/ArrayCwiseBinaryOps.h \
-		../external/Eigen/src/Core/util/BlasUtil.h \
-		../external/Eigen/src/Core/DenseStorage.h \
-		../external/Eigen/src/Core/NestByValue.h \
-		../external/Eigen/src/Core/ReturnByValue.h \
-		../external/Eigen/src/Core/NoAlias.h \
-		../external/Eigen/src/Core/PlainObjectBase.h \
-		../external/Eigen/src/Core/Matrix.h \
-		../external/Eigen/src/Core/Array.h \
-		../external/Eigen/src/Core/CwiseTernaryOp.h \
-		../external/Eigen/src/Core/CwiseBinaryOp.h \
-		../external/Eigen/src/Core/CwiseUnaryOp.h \
-		../external/Eigen/src/Core/CwiseNullaryOp.h \
-		../external/Eigen/src/Core/CwiseUnaryView.h \
-		../external/Eigen/src/Core/SelfCwiseBinaryOp.h \
-		../external/Eigen/src/Core/Dot.h \
-		../external/Eigen/src/Core/StableNorm.h \
-		../external/Eigen/src/Core/Stride.h \
-		../external/Eigen/src/Core/MapBase.h \
-		../external/Eigen/src/Core/Map.h \
-		../external/Eigen/src/Core/Ref.h \
-		../external/Eigen/src/Core/Block.h \
-		../external/Eigen/src/Core/VectorBlock.h \
-		../external/Eigen/src/Core/Transpose.h \
-		../external/Eigen/src/Core/DiagonalMatrix.h \
-		../external/Eigen/src/Core/Diagonal.h \
-		../external/Eigen/src/Core/DiagonalProduct.h \
-		../external/Eigen/src/Core/Redux.h \
-		../external/Eigen/src/Core/Visitor.h \
-		../external/Eigen/src/Core/Fuzzy.h \
-		../external/Eigen/src/Core/IO.h \
-		../external/Eigen/src/Core/Swap.h \
-		../external/Eigen/src/Core/CommaInitializer.h \
-		../external/Eigen/src/Core/GeneralProduct.h \
-		../external/Eigen/src/Core/Solve.h \
-		../external/Eigen/src/Core/Inverse.h \
-		../external/Eigen/src/Core/SolverBase.h \
-		../external/Eigen/src/Core/PermutationMatrix.h \
-		../external/Eigen/src/Core/Transpositions.h \
-		../external/Eigen/src/Core/TriangularMatrix.h \
-		../external/Eigen/src/Core/SelfAdjointView.h \
-		../external/Eigen/src/Core/products/GeneralBlockPanelKernel.h \
-		../external/Eigen/src/Core/products/Parallelizer.h \
-		../external/Eigen/src/Core/ProductEvaluators.h \
-		../external/Eigen/src/Core/products/GeneralMatrixVector.h \
-		../external/Eigen/src/Core/products/GeneralMatrixMatrix.h \
-		../external/Eigen/src/Core/SolveTriangular.h \
-		../external/Eigen/src/Core/products/GeneralMatrixMatrixTriangular.h \
-		../external/Eigen/src/Core/products/SelfadjointMatrixVector.h \
-		../external/Eigen/src/Core/products/SelfadjointMatrixMatrix.h \
-		../external/Eigen/src/Core/products/SelfadjointProduct.h \
-		../external/Eigen/src/Core/products/SelfadjointRank2Update.h \
-		../external/Eigen/src/Core/products/TriangularMatrixVector.h \
-		../external/Eigen/src/Core/products/TriangularMatrixMatrix.h \
-		../external/Eigen/src/Core/products/TriangularSolverMatrix.h \
-		../external/Eigen/src/Core/products/TriangularSolverVector.h \
-		../external/Eigen/src/Core/BandMatrix.h \
-		../external/Eigen/src/Core/CoreIterators.h \
-		../external/Eigen/src/Core/ConditionEstimator.h \
-		../external/Eigen/src/Core/BooleanRedux.h \
-		../external/Eigen/src/Core/Select.h \
-		../external/Eigen/src/Core/VectorwiseOp.h \
-		../external/Eigen/src/Core/Random.h \
-		../external/Eigen/src/Core/Replicate.h \
-		../external/Eigen/src/Core/Reverse.h \
-		../external/Eigen/src/Core/ArrayWrapper.h \
-		../external/Eigen/src/Core/products/GeneralMatrixMatrix_BLAS.h \
-		../external/Eigen/src/Core/products/GeneralMatrixVector_BLAS.h \
-		../external/Eigen/src/Core/products/GeneralMatrixMatrixTriangular_BLAS.h \
-		../external/Eigen/src/Core/products/SelfadjointMatrixMatrix_BLAS.h \
-		../external/Eigen/src/Core/products/SelfadjointMatrixVector_BLAS.h \
-		../external/Eigen/src/Core/products/TriangularMatrixMatrix_BLAS.h \
-		../external/Eigen/src/Core/products/TriangularMatrixVector_BLAS.h \
-		../external/Eigen/src/Core/products/TriangularSolverMatrix_BLAS.h \
-		../external/Eigen/src/Core/Assign_MKL.h \
-		../external/Eigen/src/Core/GlobalFunctions.h \
-		../external/Eigen/src/Core/util/ReenableStupidWarnings.h \
-		../external/Eigen/LU \
-		../external/Eigen/src/misc/Kernel.h \
-		../external/Eigen/src/misc/Image.h \
-		../external/Eigen/src/LU/FullPivLU.h \
-		../external/Eigen/src/LU/PartialPivLU.h \
-		../external/Eigen/src/misc/lapacke.h \
-		../external/Eigen/src/misc/lapacke_mangling.h \
-		../external/Eigen/src/LU/PartialPivLU_LAPACKE.h \
-		../external/Eigen/src/LU/Determinant.h \
-		../external/Eigen/src/LU/InverseImpl.h \
-		../external/Eigen/src/LU/arch/Inverse_SSE.h \
-		../external/Eigen/Cholesky \
-		../external/Eigen/src/Cholesky/LLT.h \
-		../external/Eigen/src/Cholesky/LDLT.h \
-		../external/Eigen/src/Cholesky/LLT_LAPACKE.h \
-		../external/Eigen/QR \
-		../external/Eigen/Jacobi \
-		../external/Eigen/src/Jacobi/Jacobi.h \
-		../external/Eigen/Householder \
-		../external/Eigen/src/Householder/Householder.h \
-		../external/Eigen/src/Householder/HouseholderSequence.h \
-		../external/Eigen/src/Householder/BlockHouseholder.h \
-		../external/Eigen/src/QR/HouseholderQR.h \
-		../external/Eigen/src/QR/FullPivHouseholderQR.h \
-		../external/Eigen/src/QR/ColPivHouseholderQR.h \
-		../external/Eigen/src/QR/CompleteOrthogonalDecomposition.h \
-		../external/Eigen/src/QR/HouseholderQR_LAPACKE.h \
-		../external/Eigen/src/QR/ColPivHouseholderQR_LAPACKE.h \
-		../external/Eigen/SVD \
-		../external/Eigen/src/misc/RealSvd2x2.h \
-		../external/Eigen/src/SVD/UpperBidiagonalization.h \
-		../external/Eigen/src/SVD/SVDBase.h \
-		../external/Eigen/src/SVD/JacobiSVD.h \
-		../external/Eigen/src/SVD/BDCSVD.h \
-		../external/Eigen/src/SVD/JacobiSVD_LAPACKE.h \
-		../external/Eigen/Geometry \
-		../external/Eigen/src/Geometry/OrthoMethods.h \
-		../external/Eigen/src/Geometry/EulerAngles.h \
-		../external/Eigen/src/Geometry/Homogeneous.h \
-		../external/Eigen/src/Geometry/RotationBase.h \
-		../external/Eigen/src/Geometry/Rotation2D.h \
-		../external/Eigen/src/Geometry/Quaternion.h \
-		../external/Eigen/src/Geometry/AngleAxis.h \
-		../external/Eigen/src/Geometry/Transform.h \
-		../external/Eigen/src/Geometry/Translation.h \
-		../external/Eigen/src/Geometry/Scaling.h \
-		../external/Eigen/src/Geometry/Hyperplane.h \
-		../external/Eigen/src/Geometry/ParametrizedLine.h \
-		../external/Eigen/src/Geometry/AlignedBox.h \
-		../external/Eigen/src/Geometry/Umeyama.h \
-		../external/Eigen/src/Geometry/arch/Geometry_SSE.h \
-		../external/Eigen/Eigenvalues \
-		../external/Eigen/src/Eigenvalues/Tridiagonalization.h \
-		../external/Eigen/src/Eigenvalues/RealSchur.h \
-		../external/Eigen/src/Eigenvalues/HessenbergDecomposition.h \
-		../external/Eigen/src/Eigenvalues/EigenSolver.h \
-		../external/Eigen/src/Eigenvalues/SelfAdjointEigenSolver.h \
-		../external/Eigen/src/Eigenvalues/GeneralizedSelfAdjointEigenSolver.h \
-		../external/Eigen/src/Eigenvalues/ComplexSchur.h \
-		../external/Eigen/src/Eigenvalues/ComplexEigenSolver.h \
-		../external/Eigen/src/Eigenvalues/RealQZ.h \
-		../external/Eigen/src/Eigenvalues/GeneralizedEigenSolver.h \
-		../external/Eigen/src/Eigenvalues/MatrixBaseEigenvalues.h \
-		../external/Eigen/src/Eigenvalues/RealSchur_LAPACKE.h \
-		../external/Eigen/src/Eigenvalues/ComplexSchur_LAPACKE.h \
-		../external/Eigen/src/Eigenvalues/SelfAdjointEigenSolver_LAPACKE.h \
-		../external/Eigen/Sparse \
-		../external/Eigen/SparseCore \
-		../external/Eigen/src/SparseCore/SparseUtil.h \
-		../external/Eigen/src/SparseCore/SparseMatrixBase.h \
-		../external/Eigen/src/SparseCore/SparseAssign.h \
-		../external/Eigen/src/SparseCore/CompressedStorage.h \
-		../external/Eigen/src/SparseCore/AmbiVector.h \
-		../external/Eigen/src/SparseCore/SparseCompressedBase.h \
-		../external/Eigen/src/SparseCore/SparseMatrix.h \
-		../external/Eigen/src/SparseCore/SparseMap.h \
-		../external/Eigen/src/SparseCore/MappedSparseMatrix.h \
-		../external/Eigen/src/SparseCore/SparseVector.h \
-		../external/Eigen/src/SparseCore/SparseRef.h \
-		../external/Eigen/src/SparseCore/SparseCwiseUnaryOp.h \
-		../external/Eigen/src/SparseCore/SparseCwiseBinaryOp.h \
-		../external/Eigen/src/SparseCore/SparseTranspose.h \
-		../external/Eigen/src/SparseCore/SparseBlock.h \
-		../external/Eigen/src/SparseCore/SparseDot.h \
-		../external/Eigen/src/SparseCore/SparseRedux.h \
-		../external/Eigen/src/SparseCore/SparseView.h \
-		../external/Eigen/src/SparseCore/SparseDiagonalProduct.h \
-		../external/Eigen/src/SparseCore/ConservativeSparseSparseProduct.h \
-		../external/Eigen/src/SparseCore/SparseSparseProductWithPruning.h \
-		../external/Eigen/src/SparseCore/SparseProduct.h \
-		../external/Eigen/src/SparseCore/SparseDenseProduct.h \
-		../external/Eigen/src/SparseCore/SparseSelfAdjointView.h \
-		../external/Eigen/src/SparseCore/SparseTriangularView.h \
-		../external/Eigen/src/SparseCore/TriangularSolver.h \
-		../external/Eigen/src/SparseCore/SparsePermutation.h \
-		../external/Eigen/src/SparseCore/SparseFuzzy.h \
-		../external/Eigen/src/SparseCore/SparseSolverBase.h \
-		../external/Eigen/OrderingMethods \
-		../external/Eigen/src/OrderingMethods/Amd.h \
-		../external/Eigen/src/Core/util/NonMPL2.h \
-		../external/Eigen/src/OrderingMethods/Ordering.h \
-		../external/Eigen/src/OrderingMethods/Eigen_Colamd.h \
-		../external/Eigen/SparseCholesky \
-		../external/Eigen/src/SparseCholesky/SimplicialCholesky.h \
-		../external/Eigen/src/SparseCholesky/SimplicialCholesky_impl.h \
-		../external/Eigen/SparseLU \
-		../external/Eigen/src/SparseLU/SparseLU_gemm_kernel.h \
-		../external/Eigen/src/SparseLU/SparseLU_Structs.h \
-		../external/Eigen/src/SparseLU/SparseLU_SupernodalMatrix.h \
-		../external/Eigen/src/SparseLU/SparseLUImpl.h \
-		../external/Eigen/src/SparseCore/SparseColEtree.h \
-		../external/Eigen/src/SparseLU/SparseLU_Memory.h \
-		../external/Eigen/src/SparseLU/SparseLU_heap_relax_snode.h \
-		../external/Eigen/src/SparseLU/SparseLU_relax_snode.h \
-		../external/Eigen/src/SparseLU/SparseLU_pivotL.h \
-		../external/Eigen/src/SparseLU/SparseLU_panel_dfs.h \
-		../external/Eigen/src/SparseLU/SparseLU_kernel_bmod.h \
-		../external/Eigen/src/SparseLU/SparseLU_panel_bmod.h \
-		../external/Eigen/src/SparseLU/SparseLU_column_dfs.h \
-		../external/Eigen/src/SparseLU/SparseLU_column_bmod.h \
-		../external/Eigen/src/SparseLU/SparseLU_copy_to_ucol.h \
-		../external/Eigen/src/SparseLU/SparseLU_pruneL.h \
-		../external/Eigen/src/SparseLU/SparseLU_Utils.h \
-		../external/Eigen/src/SparseLU/SparseLU.h \
-		../external/Eigen/SparseQR \
-		../external/Eigen/src/SparseQR/SparseQR.h \
-		../external/Eigen/IterativeLinearSolvers \
-		../external/Eigen/src/IterativeLinearSolvers/SolveWithGuess.h \
-		../external/Eigen/src/IterativeLinearSolvers/IterativeSolverBase.h \
-		../external/Eigen/src/IterativeLinearSolvers/BasicPreconditioners.h \
-		../external/Eigen/src/IterativeLinearSolvers/ConjugateGradient.h \
-		../external/Eigen/src/IterativeLinearSolvers/LeastSquareConjugateGradient.h \
-		../external/Eigen/src/IterativeLinearSolvers/BiCGSTAB.h \
-		../external/Eigen/src/IterativeLinearSolvers/IncompleteLUT.h \
-		../external/Eigen/src/IterativeLinearSolvers/IncompleteCholesky.h \
-		../external/igl/pathinfo.h \
-		../external/igl/igl_inline.h \
-		../external/igl/pathinfo.cpp \
-		../external/igl/dirname.h \
-		../external/igl/dirname.cpp \
-		../external/igl/verbose.h \
-		../external/igl/basename.h \
-		../external/igl/basename.cpp \
-		../external/igl/readOBJ.h \
-		../external/igl/deprecated.h \
-		../spectral/Eigen/Core \
-		../external/igl/readOBJ.cpp \
-		../external/igl/list_to_matrix.h \
-		../external/igl/list_to_matrix.cpp \
-		../spectral/Eigen/Dense \
-		../external/igl/max_size.h \
-		../external/igl/max_size.cpp \
-		../external/igl/min_size.h \
-		../external/igl/min_size.cpp \
-		../spectral/CellMesh/cellmesh.h \
-		../spectral/CellMesh/cellvertex.h \
-		../spectral/CellMesh/celledge.h \
-		../spectral/CellMesh/polylinevertex.h \
-		../spectral/CellMesh/cellface.h \
-		../spectral/CellMesh/parameterization.h \
-		../spectral/Eigen/SparseCore \
-		../spectral/Eigen/Sparse \
-		../external/Spectra/GenEigsSolver.h \
-		../external/Spectra/GenEigsBase.h \
-		../external/Spectra/Util/TypeTraits.h \
-		../external/Spectra/Util/SelectionRule.h \
-		../external/Spectra/Util/CompInfo.h \
-		../external/Spectra/Util/SimpleRandom.h \
-		../external/Spectra/MatOp/internal/ArnoldiOp.h \
-		../external/Spectra/LinAlg/UpperHessenbergQR.h \
-		../external/Spectra/LinAlg/DoubleShiftQR.h \
-		../external/Spectra/LinAlg/UpperHessenbergEigen.h \
-		../spectral/Eigen/Eigenvalues \
-		../external/Spectra/LinAlg/Arnoldi.h \
-		../external/Spectra/MatOp/DenseGenMatProd.h \
-		../external/Spectra/SymEigsSolver.h \
-		../external/Spectra/SymEigsBase.h \
-		../external/Spectra/LinAlg/TridiagEigen.h \
-		../spectral/Eigen/Jacobi \
-		../external/Spectra/LinAlg/Lanczos.h \
-		../external/Spectra/MatOp/DenseSymMatProd.h \
-		../external/Spectra/MatOp/SparseGenMatProd.h \
-		../external/igl/cotmatrix.h \
-		../external/igl/cotmatrix.cpp \
-		../external/igl/cotmatrix_entries.h \
-		../external/igl/cotmatrix_entries.cpp \
-		../external/igl/doublearea.h \
-		../external/igl/doublearea.cpp \
-		../external/igl/edge_lengths.h \
-		../external/igl/edge_lengths.cpp \
-		../external/igl/squared_edge_lengths.h \
-		../external/igl/squared_edge_lengths.cpp \
-		../external/igl/parallel_for.h \
-		../external/igl/sort.h \
-		../external/igl/sort.cpp \
-		../external/igl/SortableRow.h \
-		../external/igl/reorder.h \
-		../external/igl/reorder.cpp \
-		../external/igl/IndexComparison.h \
-		../external/igl/colon.h \
-		../external/igl/colon.cpp \
-		../external/igl/LinSpaced.h \
-		../external/igl/face_areas.h \
-		../external/igl/face_areas.cpp \
-		../external/igl/volume.h \
-		../external/igl/volume.cpp \
-		../external/igl/cross.h \
-		../external/igl/cross.cpp \
-		../spectral/Eigen/Geometry \
-		../external/igl/dihedral_angles.h \
-		../external/igl/dihedral_angles.cpp
-	$(CXX) -c $(CXXFLAGS) $(INCPATH) -o spectral1.o ../spectral/spectral1.cpp
-
 spectralsolver.o: ../spectral/spectralsolver.cpp ../spectral/spectralsolver.h \
 		../spectral/laplacesolver.h \
 		../spectral/Mesh/vertex.h \
@@ -7715,8 +7455,24 @@ closestface.o: ../spectral/closestface.cpp ../spectral/closestface.h \
 		../external/igl/ray_box_intersect.cpp \
 		../external/igl/ray_mesh_intersect.h \
 		../external/igl/ray_mesh_intersect.cpp \
-		../external/igl/raytri.c
+		../external/igl/raytri.c \
+		../spectral/stlwriter.h \
+		../spectral/CellMesh/cellface.h \
+		../spectral/CellMesh/cellvertex.h \
+		../spectral/CellMesh/polylinevertex.h \
+		../spectral/CellMesh/celledge.h \
+		../spectral/BSpline/bsplinesurface.h \
+		../spectral/BSpline/bsplineproperties.h \
+		../spectral/BSpline/bsplinepatchnetwork.h \
+		../spectral/CellMesh/cellmesh.h \
+		../spectral/CellMesh/parameterization.h \
+		../spectral/BSpline/bsplinecurve.h \
+		../spectral/MBSI/subsurfacetree.h \
+		../spectral/MBSI/subdivisionabstractmetric.h
 	$(CXX) -c $(CXXFLAGS) $(INCPATH) -o closestface.o ../spectral/closestface.cpp
+
+csvio.o: ../spectral/csvio.cpp ../spectral/csvio.h
+	$(CXX) -c $(CXXFLAGS) $(INCPATH) -o csvio.o ../spectral/csvio.cpp
 
 moc_mainwindow.o: moc_mainwindow.cpp 
 	$(CXX) -c $(CXXFLAGS) $(INCPATH) -o moc_mainwindow.o moc_mainwindow.cpp

@@ -27,6 +27,8 @@ public:
     BSplineSurface *fitSingleSurface_noConstraints(int cfId, const double weightLS, const double weightEnergy);
     BSplineSurface *fitSingleSurface_boundaryInterpolation(int cfId, QVector<BSplineCurve *> boundaryCurves, const double weightLS, const double weightEnergy);
 
+    BSplineSurface *fitSingleSurface_noConstraintsNew(const QVector<QPair<QVector3D, QVector2D> > &data, const double weightLS, const double weightEnergy);
+
     Eigen::SparseMatrix<double, Eigen::RowMajor> constructCoefficientMatrixForOneCell(int cfId, BSplineProperties *properties);
     Eigen::MatrixXd constructDataPointVector(QVector<Vertex *> *dataPoints);
 

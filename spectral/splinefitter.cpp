@@ -2646,6 +2646,112 @@ BSplineSurface *Splinefitter::fitSingleSurface_boundaryInterpolation(int cfId, Q
     return new BSplineSurface(m_properties, m_properties, controlPoints);
 }
 
+BSplineSurface *Splinefitter::fitSingleSurface_noConstraintsNew(const QVector<QPair<QVector3D, QVector2D> > &data, const double weightLS, const double weightEnergy)
+{
+    //  CellFace *cf = m_cellMesh->getFace(cfId);
+    const int numberOfControlPointsPerRow = m_properties->getNumberOfControlPoints();
+    const int numberOfControlPointsPerSurface = numberOfControlPointsPerRow * numberOfControlPointsPerRow;
+
+    // QVector<Vertex *> *data = cf->getMeshVertices();
+    const int numberOfLocalDataPoints = data.size();
+
+    //Parameterization *cfParam = m_cellMesh->getQuadCellParameterization(cfId);
+
+    //Construct coefficient matrix and data point vector for approximation (least square system)
+    Eigen::SparseMatrix<double> matrixLS(numberOfLocalDataPoints, numberOfControlPointsPerSurface);
+//    const int nonZeroBasisFunctions = m_properties->getOrder() + 1;
+//    matrixLS.reserve(Eigen::VectorXi::Constant(numberOfLocalDataPoints, nonZeroBasisFunctions * nonZeroBasisFunctions));
+    Eigen::VectorXd dataPointsX(numberOfLocalDataPoints);
+    Eigen::VectorXd dataPointsY(numberOfLocalDataPoints);
+    Eigen::VectorXd dataPointsZ(numberOfLocalDataPoints);
+
+    for (int k = 0; k < numberOfLocalDataPoints; k++) {
+
+        QVector2D vParam=data[k].second;
+
+        dataPointsX[k] = data[k].first.x();
+        dataPointsY[k] = data[k].first.y();
+        dataPointsZ[k] = data[k].first.z();
+
+        for (int i = 0; i < numberOfControlPointsPerRow; i++) {
+            const double nu = m_properties->N(vParam.x(), i);
+            for (int j = 0; j < numberOfControlPointsPerRow; j++) {
+                const double nv = m_properties->N(vParam.y(), j);
+                const double product = nu*nv;
+                if (product != 0)
+                    matrixLS.insert(k, BSplineSurface::matToVecIndexLocal(i, j, numberOfControlPointsPerRow)) = product;
+            }
+        }
+    }
+
+    double wLS = weightLS;
+    double wEnergy = weightEnergy;
+
+    //calculate initial guess
+    Eigen::SparseMatrix<double> matrixLStLS = wLS * matrixLS.transpose() * matrixLS + wEnergy * m_energyMatrix;
+
+    Eigen::VectorXd rightSideX = wLS * matrixLS.transpose() * dataPointsX;
+    Eigen::VectorXd rightSideY = wLS * matrixLS.transpose() * dataPointsY;
+    Eigen::VectorXd rightSideZ = wLS * matrixLS.transpose() * dataPointsZ;
+
+    //Eigen::LeastSquaresConjugateGradient<Eigen::SparseMatrix<double> > solver;
+    Eigen::ConjugateGradient<Eigen::SparseMatrix<double> > solver;
+    //Eigen::SimplicialLLT<Eigen::SparseMatrix<double> > solver;
+    //solver.setTolerance(3e-20);
+    //solver.setMaxIterations(matrixLStLS.cols()*100);
+    //Eigen::SparseLU<Eigen::SparseMatrix<double> > solver;
+//    qDebug() << "a";
+    solver.compute(matrixLStLS);
+//    qDebug() << "b";
+    Eigen::VectorXd ctrX = solver.solve(rightSideX);
+    Eigen::VectorXd ctrY = solver.solve(rightSideY);
+    Eigen::VectorXd ctrZ = solver.solve(rightSideZ);
+//    qDebug() << "c";
+
+    std::cout << matrixLStLS * ctrX - rightSideX << std::endl << "Norm: " << (matrixLStLS * ctrX - rightSideX).norm() << std::endl;
+    std::cout << matrixLStLS * ctrY - rightSideY << std::endl << "Norm: " << (matrixLStLS * ctrY - rightSideY).norm() << std::endl;
+    std::cout << matrixLStLS * ctrZ - rightSideZ << std::endl << "Norm: " << (matrixLStLS * ctrZ - rightSideZ).norm() << std::endl;
+
+
+
+    //debug stuff
+    const double lsErrorSqrtX = (matrixLS * ctrX - dataPointsX).norm();
+    const double lsErrorSqrtY = (matrixLS * ctrY - dataPointsY).norm();
+    const double lsErrorSqrtZ = (matrixLS * ctrZ - dataPointsZ).norm();
+
+    const double lsErrorX = lsErrorSqrtX * lsErrorSqrtX;
+    const double lsErrorY = lsErrorSqrtY * lsErrorSqrtY;
+    const double lsErrorZ = lsErrorSqrtZ * lsErrorSqrtZ;
+
+    const double lsErrorTotal = lsErrorX + lsErrorY + lsErrorZ;
+
+    qDebug() << "LS Error:" << lsErrorTotal << "per datapoint:" << lsErrorTotal/numberOfLocalDataPoints << "datapoints:" << numberOfLocalDataPoints;
+    qDebug() << "Individual Errors" << lsErrorX << lsErrorY << lsErrorZ;
+
+    const double energyX = ctrX.transpose() * m_energyMatrix * ctrX;
+    const double energyY = ctrY.transpose() * m_energyMatrix * ctrY;
+    const double energyZ = ctrZ.transpose() * m_energyMatrix * ctrZ;
+
+    const double energyTotal = energyX + energyY + energyZ;
+    //TODO energy per area
+    qDebug() << "Energy:" << energyTotal;
+    qDebug() << "Individual energy terms:" << energyX << energyY << energyZ;
+    qDebug() << "Weighted sum:" << 0.5 * wLS * lsErrorTotal + 0.5 * wEnergy * energyTotal;
+
+    //Convert into 2D array of 3D points
+    QVector<QVector<QVector3D> > controlPoints(numberOfControlPointsPerRow, QVector<QVector3D>(numberOfControlPointsPerRow));
+    for (int i = 0; i < numberOfControlPointsPerRow; i++) {
+        for (int j = 0; j < numberOfControlPointsPerRow; j++) {
+            const int ctrPointIndex = BSplineSurface::matToVecIndexLocal(i, j, numberOfControlPointsPerRow);
+            const QVector3D ctrPoint(ctrX[ctrPointIndex], ctrY[ctrPointIndex], ctrZ[ctrPointIndex]);
+
+            controlPoints[i][j] = ctrPoint;
+        }
+    }
+
+    return new BSplineSurface(m_properties, m_properties, controlPoints);
+}
+
 Eigen::SparseMatrix<double, Eigen::RowMajor> Splinefitter::constructCoefficientMatrixForOneCell(int cfId, BSplineProperties *properties)
 {
     CellFace *cf = m_cellMesh->getFace(cfId);

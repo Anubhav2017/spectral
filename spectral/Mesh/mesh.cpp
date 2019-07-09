@@ -558,7 +558,7 @@ Mesh* Mesh::loadFromObj(QString qfilename){
               for(int j=3;j<fshape;j++){
                   QVector3D vec=corners[j]-corners[0];
                   if(QVector3D::dotProduct(vec,normal) != 0){
-                      qDebug() << QVector3D::dotProduct(vec,normal);
+                      //qDebug() << QVector3D::dotProduct(vec,normal);
                       normal=QVector3D(0,0,0);
                       break;
                   }

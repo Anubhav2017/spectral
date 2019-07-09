@@ -43,67 +43,140 @@ void StlWriter::writeMeshFacesToStl(Mesh *m, QString filename)
         faces[i] = m->getFace(i);
 
     //this->writeFacesToStl(&faces, filename);
-    this->writeFacesToStlBinary(&faces, filename);
+    this->writeFacesToStlBinary(&faces,filename);
+    //this->writeFacesToStlBinary2(&faces, QString(filename+"2"));
 }
 
 #include "stdint.h"
+
+
+//void StlWriter::writeFacesToStlBinary2(QVector<Face *> *faces, QString filename)
+//{
+//    QString fullFilename = QString(m_defaultFolder).append(filename);
+//    if (!fullFilename.endsWith(".stl", Qt::CaseInsensitive))
+//        fullFilename.append(".stl");
+
+//    std::ofstream file;
+//    std::string stdFilename = fullFilename.toStdString();
+//    const int n = stdFilename.size();
+//    char name[n + 1];
+//    std::strcpy(name, stdFilename.c_str());
+//    file.open(name, std::ios::binary | std::ios::out);
+
+//    std::string headstring = "Binary STL File";
+//    char head[80] = {0};
+//    strcpy(head, headstring.c_str());
+//    file.write(head, 80);
+
+//    //TODO find types that work under windows and linux
+//    const uint32_t numberOfFaces = faces->size();
+//    file.write((char*) &numberOfFaces, 4);
+
+
+//    for (int i = 0; i < faces->size(); i++) {
+//        Face *f = faces->at(i);
+
+//        const QVector3D v0 = f->getVertex(0)->getPosition();
+//        const QVector3D v1 = f->getVertex(1)->getPosition();
+//        const QVector3D v2 = f->getVertex(2)->getPosition();
+//        const QVector3D normal=f->getNormal();
+
+//        float values[12];
+//        char dummy[2];
+
+
+
+//        std::string s = std::to_string(i);
+//        strcpy(dummy,s.c_str());
+
+//        values[0]=normal.x();
+//        values[1]=normal.y();
+//        values[2]=normal.z();
+//        values[3]=v0.x();
+//        values[4]=v0.y();
+//        values[5]=v0.z();
+//        values[6]=v1.x();
+//        values[7]=v1.y();
+//        values[8]=v1.z();
+//        values[9]=v2.x();
+//        values[10]=v2.y();
+//        values[11]=v2.z();
+
+
+//        file.write((char*)&values,48);
+//        file.write((char*)&dummy,2);
+
+//    }
+
+//    file.close();
+
+//}
+
 void StlWriter::writeFacesToStlBinary(QVector<Face *> *faces, QString filename)
 {
     QString fullFilename = QString(m_defaultFolder).append(filename);
     if (!fullFilename.endsWith(".stl", Qt::CaseInsensitive))
         fullFilename.append(".stl");
 
-    std::ofstream stream;
+    std::ofstream file;
     std::string stdFilename = fullFilename.toStdString();
     const int n = stdFilename.size();
     char name[n + 1];
     std::strcpy(name, stdFilename.c_str());
-    stream.open(name, std::ios::binary | std::ios::out);
+    file.open(name, std::ios::binary | std::ios::out);
 
     std::string headstring = "Binary STL File";
     char head[80] = {0};
     strcpy(head, headstring.c_str());
-    stream.write(head, 80);
+    file.write(head, 80);
 
     //TODO find types that work under windows and linux
     const uint32_t numberOfFaces = faces->size();
-    stream.write((char*) &numberOfFaces, 4);
+    const uint32_t numberOftriangularFaces = (faces->at(0)->getNumberOfVertices()-2)*numberOfFaces;
 
-    //char attribute[2]="0";
-    uint16_t attCount = 0;
+
+    file.write((char*) &numberOftriangularFaces, 4);
+
 
     for (int i = 0; i < faces->size(); i++) {
         Face *f = faces->at(i);
 
         const QVector3D v0 = f->getVertex(0)->getPosition();
-        float corner0[3] = {(float) v0.x(), (float) v0.y(), (float) v0.z()};
-        float normal[3] = {(float) f->getNormal().x(), (float) f->getNormal().y(), (float) f->getNormal().z()};
+        const QVector3D normal=f->getNormal();
 
         for (int j = 2; j < f->getNumberOfVertices(); j++) {
             QVector3D v1 = f->getVertex(j - 1)->getPosition();
             QVector3D v2 = f->getVertex(j)->getPosition();
 
-            float corner1[3] = {(float) v1.x(), (float) v1.y(), (float) v1.z()};
-            float corner2[3] = {(float) v2.x(), (float) v2.y(), (float) v2.z()};
+            float values[12];
+            char dummy[2];
 
-            stream.write((char *) &normal[0], 4);
-            stream.write((char *) &normal[1], 4);
-            stream.write((char *) &normal[2], 4);
-            stream.write((char *) &corner0[0], 4);
-            stream.write((char *) &corner0[1], 4);
-            stream.write((char *) &corner0[2], 4);
-            stream.write((char *) &corner1[0], 4);
-            stream.write((char *) &corner1[1], 4);
-            stream.write((char *) &corner1[2], 4);
-            stream.write((char *) &corner2[0], 4);
-            stream.write((char *) &corner2[1], 4);
-            stream.write((char *) &corner2[2], 4);
+            std::string s = std::to_string(i);
+            strcpy(dummy,s.c_str());
 
-            stream.write((char *) &attCount, 2);
+            values[0]=normal.x();
+            values[1]=normal.y();
+            values[2]=normal.z();
+            values[3]=v0.x();
+            values[4]=v0.y();
+            values[5]=v0.z();
+            values[6]=v1.x();
+            values[7]=v1.y();
+            values[8]=v1.z();
+            values[9]=v2.x();
+            values[10]=v2.y();
+            values[11]=v2.z();
+
+
+            file.write((char*)&values,48);
+            file.write((char*)&dummy,2);
+            }
+
         }
-    }
 
-    stream.close();
+        file.close();
+
+
 }
 
 void StlWriter::writeFacesToStlASCII(QVector<Face *> *faces, QString filename)
@@ -223,7 +296,7 @@ void StlWriter::writeBSplineSurfacesToStl(QVector<BSplineSurface *> surfaces, QS
         }
     }
 
-    this->writeFacesToStlASCII(&tmpFaces, filename);
+    this->writeFacesToStlBinary(&tmpFaces, filename);
 
     //clean up
     const int numTmpFaces = tmpFaces.size();

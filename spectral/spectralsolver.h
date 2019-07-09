@@ -11,7 +11,7 @@ public:
     static void saveEigenvectorToTxt(Mesh *m, QVector<double> eigenvector, QString filename);
     static QVector<int> loadMorseSmaleDecomposition(QString filename);
     static CellMesh* createCellMeshFromMorseSmale(Mesh *m, QVector<int> vertexmap);
-    static QVector<QColor> generateColorMap2(QVector<double >realvector);
+    static QVector<QColor> generateColorMapBnW(QVector<double >realvector);
 };
 
 #endif // SPECTRALSOLVER_H

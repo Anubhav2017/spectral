@@ -21,6 +21,7 @@ public:
 
     void writeMeshFacesToStl(Mesh *m, QString filename);
     void writeFacesToStlBinary(QVector<Face *> *faces, QString filename);
+    void writeFacesToStlBinary2(QVector<Face *> *faces, QString filename);
     void writeFacesToStlASCII(QVector<Face *> *faces, QString filename);
     void writeEdgesToStl(QVector<Edge *> *edges, QString filename, double width=0);
     void writeBSplineCurvesToStl(QVector<BSplineCurve *> curves, QString filename, double linewidth = 0.2, int numberOfEvalPointsPerCurve = 51);
